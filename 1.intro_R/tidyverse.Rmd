@@ -1,0 +1,232 @@
+---
+title: "Tidyverse"
+subtitle: "Tidyverse VS. Base"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# Tidyverse
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+---
+# What is the Tidyverse?
+
+[Tidyverse](https://www.tidyverse.org/) is a bundle of packages which can be installed separated or together with `tidyverse`, and they share an underlying design philosophy, grammar, and data structure.
+
+--
+
+The main packages of this bundle are:
+
+- **ggplot2** is a system for declaratively creating graphics, based on The Grammar of Graphics
+- **dplyr** provides a grammar of data manipulation
+- **tidyr** provides a set of functions that help you get to [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf)
+- **readr** provides a fast and friendly way to read rectangular data
+- **purrr** enhances R's functional programming toolkit
+- **tibble** is a modern re-imagining of the data frame
+- **stringr** provides a cohesive set of functions designed to make working with strings as easy possible
+- **forcats** provides a suite of useful tools that solve common problems with factors
+
+---
+# Why I use (and teach) the tidyverse?
+
+It has huge advantages:
+
+- Each package follows the same grammar
+- It's easier to perform data management compared to base R
+- Readabily is improved
+
+--
+
+## But, isn't it slower?
+
+Sometimes. Even so, base R is not the fastest way to do data science in R either. We can work with `data.table`, `h2o`, `Rcpp`, etc, to manage data and improve our speed in R. 
+
+Anyway, this will always depend on many variables, the bottom line is:
+
+**The data wrangling step of ML is way easier to do in the tidyverse**
+
+If you need to optimize your workflow (speedwise) then you'll need to do some researching.
+
+---
+class: inverse, center, middle
+
+# Let's work
+
+---
+# Do and learn
+
+Install and load the `tidyverse` bundle package:
+
+--
+
+```{r eval=F}
+install.packages('tidyverse')
+library(tidyverse)
+```
+
+--
+
+Install and load the `nycflights13` package:
+
+--
+
+```{r eval=F}
+install.packages('nycflights13')
+library(nycflights13)
+```
+
+---
+# Get basic information
+
+Use the `str` and `summary` on the flights dataset to answer the following questions:
+
+1. What are the classes of the dataset?
+2. What is the class of the column *tailnum*?
+3. What is the min distance of the flights?
+4. What if the median of the datetime?
+
+---
+# Filter with dplyr::filter
+
+Use the function `filter` to find all flights that:
+
+--
+
+- Had an **arrival delay** of **two or more** hours. Hint: `>=`
+
+--
+
+```{r eval=F}
+filter(flights, arr_delay >= 120)
+```
+
+--
+
+- Flew to Houston (IAH or HOU). Hint: `|`
+
+--
+
+```{r eval=F}
+filter(flights, dest == "IAH" | dest == "HOU")
+```
+
+--
+
+- Were operated by United, American, or Delta. Hint: `%in%`
+
+--
+
+```{r eval=F}
+airlines
+filter(flights, carrier %in% c("AA", "DL", "UA"))
+```
+
+--
+
+- Arrived more than two hours late, but didn’t leave late
+
+--
+
+```{r eval=F}
+filter(flights, arr_delay > 120, dep_delay <= 0)
+```
+
+---
+# Filter with dplyr::filter
+
+- Departed in summer (July, August, and September). Hint: `between`
+
+--
+
+```{r eval=F}
+filter(flights, between(month, 7, 9))
+```
+
+---
+# Arrange rows with dplyr::arrange
+
+Use the function `arrange` to set the following order:
+
+- Sort all missing values to the start. Hint: `is.na()`
+
+--
+
+```{r, eval = F}
+arrange(flights, desc(is.na(dep_time)), dep_time)
+```
+
+--
+
+- Sort flights to find the most delayed flights. 
+
+--
+
+```{r, eval = F}
+arrange(flights, desc(dep_delay))
+```
+
+--
+
+- Which flights traveled the shortest?
+
+--
+
+```{r, eval = F}
+arrange(flights, distance)
+```
+
+---
+# Select columns with dplyr::select
+
+Use the function `select` to select the columns:
+
+- Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+
+--
+
+```{r, eval = F}
+select(flights, dep_time, dep_delay, arr_time, arr_delay)
+```
+
+--
+
+
+```{r, eval = F}
+select(flights, "dep_time", "dep_delay", "arr_time", "arr_delay")
+```
+
+--
+
+
+```{r, eval = F}
+select(flights, 4, 6, 7, 9)
+```
+
+--
+
+```{r, eval = F}
+select(flights, one_of(c("dep_time", "dep_delay", "arr_time", "arr_delay")))
+```
+
+--
+
+
+```{r, eval = F}
+select(flights, starts_with("dep_"), starts_with("arr_"))
+```
+
+---
+# Add new variables with dyplr::mutate
+
