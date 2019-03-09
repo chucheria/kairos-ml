@@ -21,251 +21,104 @@ options(htmltools.dir.version = FALSE)
 ```
 
 ---
-class: middle
+# What is RMarkdown?
 
-- R is **‘GNU S’** (free software under the GPL License)<sup>1</sup>
-- R is **language and environment**
-- R is for **statistical computing** and **graphics**
+RMarkdown is a tool within RStudio that allows you to write documents, presentations, or webpages that combine written text with analytical code.
 
-.footnote[
-[1] https://cran.r-project.org/
-]
+- The text in the document can be fully formatted in a report style (e.g., with headers, bolded text, hyperlinks, etc.)
+- You can choose to make your code visible or not
+- Documents can be output as PDFs, Word Documents, HTML, and other formats
+
+--
+
+## Why use RMarkdown?
+
+- Compile a single R Markdown document to a report in different formats, such as PDF, HTML, or Word.
+- Create notebooks in which you can directly run code chunks interactively.
+- Make slides for presentations (HTML5, LaTeX Beamer, or PowerPoint).
+- Produce dashboards with flexible, interactive, and attractive layouts.
+- Build interactive applications based on Shiny.
+- Write journal articles.
+- Author books of multiple chapters.
+- Generate websites and blogs.
 
 ---
-class: inverse, center, middle
+# Install and load
 
-# Get Started
+RMarkdown is a package like any other so:
 
----
-
-# Install R
-
-1. Download from [R-project](https://www.r-project.org/)
-2. Check your installation: in the terminal type `R`
-
-```bash
-$ R
-
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.5.0 (64-bit)
+```{r eval=F}
+install.packages('rmarkdown')
+library(rmarkdown)
 ```
 
 --
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. There are other IDEs:
+To open a new document use RStudio, this way you'll get an example script to guide you:
 
-- [Emacs](https://ess.r-project.org/)
-- [PyCharm](https://plugins.jetbrains.com/plugin/6632-r-language-support)
+![](https://d33wubrfki0l68.cloudfront.net/bf6f5a7e151b6d29054337f2af2d04b1a8f791ce/3a8c1/articles/images/rmd-new.png)
+
+---
+# Document orientation
+
+![]('figs/structure.png')
+
+There are three basic components of an R Markdown document: the metadata (YALM), text (Markdown), and code (R).
+
+---
+# YALM
+
+This is a minimal example of yalm options in an RMarkdown document. This will shape the outcome of your document.
+
+```yalm
+title: "Hello R Markdown"
+author: "Awesome Me"
+date: "`r Sys.Date()`"
+output: html_document
+```
+
+You can even execute R code!
 
 --
 
-Or use the terminal:
-
---
-
-```bash
-$ Rscript my_script.R
+```yalm
+title: "RMarkdown"
+subtitle: "Show and reproduce with RMarkdown"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
 ```
 
 ---
-class: center, middle, inverse
+# Code chunks
 
-# R basics
-
----
-
-# Basic math
+A code chunk starts with three backticks like ```` ```{r} ```` where r indicates the language name, and ends with three backticks. You can write chunk options in the curly braces (e.g., set the figure height to 5 inches: ```` ```{r, fig.height=5} ````). The code is [not limited to R](https://bookdown.org/yihui/rmarkdown/language-engines.html#language-engines).
 
 ```{r}
-1 + 2 + 3
-1 + 2 * 3
-```
+# This is an executable code chunk.
 
---
-
-The power of parenthesis
-```{r}
-(1 + 2) * 3
-```
-
---
-
-Other computations
-
-```{r eval = F}
-2 ^ 10
-10 / 2
-```
-
----
-# Comparisons
-
-```{r}
-3 == 4
-
-FALSE & TRUE
-
-FALSE | TRUE
-```
-
---
-
-Use `&` and `|` in logical expressions involving the logical values TRUE and FALSE. 
-
-Use `&&` and `||` for the flow-of-control expressions inside if and while statements (short-circuit evaluation).
-
----
-# Vectors
-
-`c` for *combine*
-
-```{r}
-v <- c(0, 1, 1, 2, 3, 5, 8)
-v
-```
---
-```{r}
-w <- 1:10
-w
-```
---
-```{r}
-c(v, w)
-```
-
----
-# Vectors
-
-```{r}
-c(1, 2, 3, 4) * c(10, 20, 30, 40)
-```
---
-```{r}
-c(1, 2, 3, 4) + 1
-```
---
-```{r}
-1 / c(1, 2, 3, 4, 5)
-```
---
-```{r}
-c(1, 2, 3, 4, 5) + c(10, 100)
-```
----
-# Variables and functions
-
-- Assign with `<-`
-- Call a function with `f(argument1, argument2, ...)`
-
---
-
-```{r}
-exp(1)
-```
---
-```{r}
-b <- c(1,2,3,4,5,6,7,8,9,10,11,12)
-b[1:3]
-```
---
-```{r}
-3 -> three
-three
-```
---
-```{r}
-f <- function(x,y) {c(x+1, y+1)}
-f
-```
-
-
----
-class: middle, inverse, center
-# Data Structures
-
----
-class: middle
-
-- An array is a multidimensional vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
-- Data frame has column names and row names. Data frame let you treat some features as factor.
-
----
-# Lists
-
-```{r}
-e <- list(thing="hat")
-e
-```
---
-```{r}
-g <- list("this list references another list", e)
-g
-```
-
-If the variable lst contains a list, it can be indexed in two ways: `lst[[n]]` is the nth element of the list; whereas `lst[n]` is a list whose only element is the nth element of lst. 
-
----
-# Array and Matrix
-
-```{r}
-a <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow = 3, ncol = 4)
-a
+fit <- lm(dist ~ speed, data = cars)
+fit
 ```
 
 --
 
-```{r}
-w <- array(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),dim=c(3,3,2))
-w[, , 1]
-```
+There's a lot of options for your code chunks, you can take a look of all in the [RMarkdown Cheatsheet](https://www.rstudio.com/resources/cheatsheets/#rmarkdown).
 
 ---
-# Data Frames
+# Render your document
 
-```{r}
-arrest <- USArrests
-head(arrest)
-names(arrest)
-row.names(arrest)[1:5]
-```
+You can render your document directly on RStudio or from the console typing: 
 
----
-# Special Values
+rmarkdown::render('foo.Rmd', 'pdf_document')
 
-```{r}
-NA
-Inf
--Inf
-NaN
-NULL
-```
----
-class: middle, inverse, center
-# Functions and packages
+--
 
----
-# Functions
-
----
-# Packages
----
-class: middle, inverse, center
-
-# HALP!
-
----
-class: middle, center
-
-- [CRAN Packages](https://cran.r-project.org/)
-- `Help`
-- Vignettes
-- `?`
-
----
-
-class: center, middle
-
-Exercises
-
-**exercises/r_lang.R**
+Lastly, there's an *unofficial* way to compile Rmd documents: the function xaringan::inf_mr(), or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the xaringan package, which is available on CRAN. The main advantage of this way is LiveReload.
