@@ -1,0 +1,384 @@
+---
+title: "What is R?"
+subtitle: "Thinking with R"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# What is R
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE)
+```
+
+---
+class: middle
+
+- R is **‘GNU S’** (free software under the GPL License)<sup>1</sup>
+- R is **language and environment**
+- R is for **statistical computing** and **graphics**
+
+.footnote[
+[1] https://cran.r-project.org/
+]
+
+---
+class: inverse, center, middle
+
+# Get Started
+
+---
+
+# Install R
+
+1. Download from [R-project](https://www.r-project.org/)
+2. Check your installation: in the terminal type `R`
+
+```bash
+$ R
+
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.5.0 (64-bit)
+```
+
+--
+
+You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. There are other IDEs:
+
+- [Emacs](https://ess.r-project.org/)
+- [PyCharm](https://plugins.jetbrains.com/plugin/6632-r-language-support)
+
+--
+
+Or use the terminal:
+
+--
+
+```bash
+$ Rscript my_script.R
+```
+
+---
+class: center, middle, inverse
+
+# RStudio
+
+---
+
+![RStudio]('figs/rstudio.png')
+
+---
+class: center, middle, inverse
+
+# Add-ins
+
+---
+# add-in?
+
+## What is an add-in?
+
+- Written in R
+- Lives in an R package
+- Invoked by the user
+- Can be interactive or non-interactive
+
+## Examples
+
+- See live changes in Xaringan
+- Copy and paste data frames from external sources
+- Choose a ggplot theme on the fly
+
+---
+class: center, middle, inverse
+
+# R basics
+
+Let's do some basic R in the console!
+---
+
+# Basic math
+
+```{r eval=FALSE}
+5+7
+```
+
+--
+
+Store the result in a variable. The assignment operator `<-` is read as `gets` or in Spanish as `asignar`. To view de content of the variable just type the variable:
+
+```{r eval=FALSE}
+x <- 5 + 7
+x
+```
+
+---
+# Numeric vectors
+
+The easiest way to create a vector is with the `c()` function (*concatenate* or *combine*)
+
+--
+
+```{r eval=FALSE}
+c(1.1, 9, 3.14)
+z <- c(1.1, 9, 3.14)
+```
+
+--
+
+Do you have a question about any function? Just type `?function` in the console and the help will magically appear. Try it now:
+
+```{r eval=FALSE}
+?c
+```
+
+--
+
+We can combine vectors with the same function:
+
+```{r eval=FALSE}
+c(1, z, 2)
+```
+
+--
+
+And perform arithmetic expressions on vectors. Common arithmetic operators are `+`, `-`, `/`, `^`, `%%`.
+
+```{r eval=FALSE}
+z * 2 + 100
+```
+
+When you do this R is a vector of 2: `c(2, 2, 2)`, and another one of 100.
+
+---
+# Numeric vectors and sequences
+
+You can perform arithmetic operations between two vectors element by element.
+```{r eval=FALSE}
+z / c(3, 2, 1)
+```
+
+--
+
+And the same *reciclyng* principle happens with different length vectors:
+
+```{r eval=FALSE}
+c(1,2,3,4) + 1:10
+```
+
+--
+
+What about more complex sequences?
+
+```{r eval=FALSE}
+pi:10
+```
+
+--
+
+Again, you can get the documentation of `:` typing `?:` in the console. 
+
+--
+
+Try to use `seq()` and `rep()` to do different vectors:
+
+- From 1 to 10 with length 30.
+- From 1 to 10 incremented by 0.5.
+- Make a 0 vector of length 10.
+
+---
+# Atomic vectors and lists
+
+- An **atomic vector** contains exactly one data type.
+- A **list** may contain multiple data types.
+
+--
+
+## Logical vectors
+
+A logical vector can contain `TRUE`, `FALSE`, and `NA` (not available).
+
+Let's create a logical vector based on conditions on a numerical vector.
+
+```{r eval=FALSE}
+c(0.5, 55, -10, 6) -> c
+c < 1
+```
+
+--
+
+If we have two logical expressions A and B:
+
+- Use `&` and `|` in logical expressions involving the logical values TRUE and FALSE. 
+- User `!` to negate.
+
+```{r eval=FALSE}
+(3 > 5) & (4 == 4)
+```
+
+---
+# Atomic vectors
+
+## Character vectors
+
+Character vectors work exactly the same as numeric vectors, and the `paste()` function treats every element as a character.
+
+```{r eval=FALSE}
+LETTERS
+paste(LETTERS, 1:4, sep = "-")
+```
+
+--
+
+## Subseting
+
+Let's create a random vector `x` with the function `runif`, with length 10, and positive and negative numbers. We can get the first 5 elements:
+
+```{r eval=FALSE}
+x[1:5]
+```
+
+--
+
+Get all elements different from `NA`, all the positives, the 3rd and 5th elements, and all elements except the 4th.
+
+--
+
+```{r eval=FALSE}
+x[!is.na(x)]
+x[x > 0]
+```
+
+
+---
+# Lists
+
+You can create named vectors and lists:
+
+```{r eval=FALSE}
+vect <- c(foo = 11, bar = 2, norf = NA)
+```
+
+You can print it to the console or only get its names with the function `names`.
+
+With a named vector you can try another way of subsetting: get the `bar` element.
+
+--
+
+A list can be nested and have a lot of levels. Create the `l` and `m` lists:
+
+```{r eval=FALSE}
+l <- list(thing="hat")
+m <- list(el = "element", list = l)
+```
+
+--
+
+If the variable lst contains a list, it can be indexed in two ways: `lst[[n]]` is the nth element of the list; whereas `lst[n]` is a list whose only element is the nth element of lst. 
+
+---
+# Functions
+
+Let's start with a simple one:
+
+```{r eval=FALSE}
+Sys.Date()
+```
+
+--
+
+You can also create a function:
+
+```{r eval=FALSE}
+remainder <- function(num, divisor = 2) {
+    num %% divisor
+}
+```
+
+--
+
+You want to see a function arguments? Use `args(remainder)` or the help!
+
+---
+class: middle, inverse, center
+
+# Data Structures
+
+---
+class: middle
+
+- An array is a multidimensional vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
+- Data frame has column names and row names. Data frame let you treat some features as factor.
+
+---
+# Array and Matrix
+
+```{r eval=FALSE}
+a <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow = 3, ncol = 4)
+a
+```
+
+--
+
+```{r eval=FALSE}
+w <- array(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),dim=c(3,3,2))
+w[, , 1]
+```
+
+---
+# Data Frames
+
+R has some datasets which you can access to learn. We are going to explore `USArrests`, first a variable will get this data frame, and then we will ask for some help on this data:
+
+```{r eval=FALSE}
+arrest <- USArrests
+```
+
+--
+
+Get some more information about this dataset with functions `class` and `dim`. If we are working with R we have to make sure we don't run out of RAM memory, so the `object.size` function is very handy.
+
+There are more advanced techniques to work with more than RAM memory.
+
+--
+
+Display the first rows of data with `head` to take a look at the set. Finally to get a glimpse of the distribution you can use `summary`, and `str` to find out about structure of the columns.
+
+```{r eval=FALSE}
+summary(arrest)
+str(arrest)
+```
+
+---
+# Packages and help
+
+## Packages
+
+We are going to be loading several packages through the course. There are two fundamental functions for packages:
+
+- `install.packages`: to install a package
+- `library`: to load a package
+
+--
+
+We are going to install `rmarkdown` and `tidyverse` for the next chapters.
+
+--
+
+## Halp!
+
+We have already see a way to have access to the function help. There are also other ways, like looking for a package documentation or a tutorial:
+
+- [CRAN Packages](https://cran.r-project.org/): packages documentation.
+- Vignettes: tutorial to start using a package.
+- Cheatsheets: all basic functions of a package.
+- `?`: inmediate access to function help.

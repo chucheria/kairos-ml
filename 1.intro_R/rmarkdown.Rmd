@@ -1,0 +1,271 @@
+---
+title: "RMarkdown"
+subtitle: "Show and reproduce with RMarkdown"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# RMarkdown
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+```
+
+---
+class: middle
+
+- R is **‘GNU S’** (free software under the GPL License)<sup>1</sup>
+- R is **language and environment**
+- R is for **statistical computing** and **graphics**
+
+.footnote[
+[1] https://cran.r-project.org/
+]
+
+---
+class: inverse, center, middle
+
+# Get Started
+
+---
+
+# Install R
+
+1. Download from [R-project](https://www.r-project.org/)
+2. Check your installation: in the terminal type `R`
+
+```bash
+$ R
+
+R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.5.0 (64-bit)
+```
+
+--
+
+You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. There are other IDEs:
+
+- [Emacs](https://ess.r-project.org/)
+- [PyCharm](https://plugins.jetbrains.com/plugin/6632-r-language-support)
+
+--
+
+Or use the terminal:
+
+--
+
+```bash
+$ Rscript my_script.R
+```
+
+---
+class: center, middle, inverse
+
+# R basics
+
+---
+
+# Basic math
+
+```{r}
+1 + 2 + 3
+1 + 2 * 3
+```
+
+--
+
+The power of parenthesis
+```{r}
+(1 + 2) * 3
+```
+
+--
+
+Other computations
+
+```{r eval = F}
+2 ^ 10
+10 / 2
+```
+
+---
+# Comparisons
+
+```{r}
+3 == 4
+
+FALSE & TRUE
+
+FALSE | TRUE
+```
+
+--
+
+Use `&` and `|` in logical expressions involving the logical values TRUE and FALSE. 
+
+Use `&&` and `||` for the flow-of-control expressions inside if and while statements (short-circuit evaluation).
+
+---
+# Vectors
+
+`c` for *combine*
+
+```{r}
+v <- c(0, 1, 1, 2, 3, 5, 8)
+v
+```
+--
+```{r}
+w <- 1:10
+w
+```
+--
+```{r}
+c(v, w)
+```
+
+---
+# Vectors
+
+```{r}
+c(1, 2, 3, 4) * c(10, 20, 30, 40)
+```
+--
+```{r}
+c(1, 2, 3, 4) + 1
+```
+--
+```{r}
+1 / c(1, 2, 3, 4, 5)
+```
+--
+```{r}
+c(1, 2, 3, 4, 5) + c(10, 100)
+```
+---
+# Variables and functions
+
+- Assign with `<-`
+- Call a function with `f(argument1, argument2, ...)`
+
+--
+
+```{r}
+exp(1)
+```
+--
+```{r}
+b <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+b[1:3]
+```
+--
+```{r}
+3 -> three
+three
+```
+--
+```{r}
+f <- function(x,y) {c(x+1, y+1)}
+f
+```
+
+
+---
+class: middle, inverse, center
+# Data Structures
+
+---
+class: middle
+
+- An array is a multidimensional vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
+- Data frame has column names and row names. Data frame let you treat some features as factor.
+
+---
+# Lists
+
+```{r}
+e <- list(thing="hat")
+e
+```
+--
+```{r}
+g <- list("this list references another list", e)
+g
+```
+
+If the variable lst contains a list, it can be indexed in two ways: `lst[[n]]` is the nth element of the list; whereas `lst[n]` is a list whose only element is the nth element of lst. 
+
+---
+# Array and Matrix
+
+```{r}
+a <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow = 3, ncol = 4)
+a
+```
+
+--
+
+```{r}
+w <- array(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),dim=c(3,3,2))
+w[, , 1]
+```
+
+---
+# Data Frames
+
+```{r}
+arrest <- USArrests
+head(arrest)
+names(arrest)
+row.names(arrest)[1:5]
+```
+
+---
+# Special Values
+
+```{r}
+NA
+Inf
+-Inf
+NaN
+NULL
+```
+---
+class: middle, inverse, center
+# Functions and packages
+
+---
+# Functions
+
+---
+# Packages
+---
+class: middle, inverse, center
+
+# HALP!
+
+---
+class: middle, center
+
+- [CRAN Packages](https://cran.r-project.org/)
+- `Help`
+- Vignettes
+- `?`
+
+---
+
+class: center, middle
+
+Exercises
+
+**exercises/r_lang.R**
