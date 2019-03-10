@@ -1,0 +1,107 @@
+---
+title: "Diamonds data"
+author: "Pon tu nombre aquí!"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, collapse = TRUE)
+```
+
+## El Dataset Diamonds
+
+Vamos a hacer un ejercicio que sea una exploración y modificación básica de un dataset. Vamos a hacerlo en forma de reporte con `RMarkdown` y trabajar con la librería `tidyverse`.
+
+Este dataset está incluído en el paquete `ggplot`, primero cargaremos las librerías para luego explorarlo.
+
+### Carga las librerías necesarias
+
+De momento solo necesitamos la librería `tidyverse`. En realidad no usaremos todos los paquetes del conjunto pero es más sencillo así.
+
+```{r load_packages}
+
+```
+
+### El dataset
+
+Gracias a que hemos cargado la librería, no es necesario tener el dataset en una variable de nuestro entorno, pero sí que nos interesa antes de hacer ningún cálculo, tener información al respecto.
+
+```{r load_data}
+
+```
+
+### Exploración básica
+
+Ayudate de las librerías `str` y `summary` para obtener información básica sobre tu dataset.
+
+
+```{r explore}
+
+```
+
+Una de las primeras comprobaciones que está bien hacer es buscar *observaciones que faltan*. Ayudate de la function `filter` con su variante `filter_all` y `is.na()` para encontrar observaciones incompletas. 
+
+```{r na_values}
+
+```
+
+Si quieres, puedes ayudarte del paquete `visdat` para visualizar los `NA`.
+
+```{r visdat}
+library(visdat)
+
+```
+
+## Tipos de variables
+
+Hay dos dipos de variables: **categóricas** y **continuas**. 
+
+- Una variable **categórica** toma valores limitados y normalmente se basan en un grupo finito. Por ejemplo países, año, género,...
+- Una variable **continua** puede tomar cualquier valor numérico. Por ejemplo precio, peso, tiempo,...
+
+### Variables continuas
+
+Para ver cómo se distribuyen las variablaes continuas normalmente usamos un histograma. Pruebalo combinando `ggplot` y `geom_histogram` sobre el precio para saber cómo se distribuye el precio sobre los diamantes:
+
+```{r histogram}
+
+```
+
+`ggplot` tiene opciones de customización sobre tu gráfico para añadir títulos, el nombre de los ejes, otros temas, entre otras opciones. Prueba a cambiar el [tema](https://ggplot2.tidyverse.org/reference/ggtheme.html) y a añadir el título *"Diamond Price Distribution"* con `ggtitle`.
+
+Utiliza la ayuda de `geom_histogram` para cambiar el ancho de las barras y tener mejor precisión sobre el histograma. 
+
+```{r bins}
+
+```
+
+Claro que esto puede ser por la calidad del diamante, ¿cómo lo podemos separar? Utiliza `facet_wrap` para dividir el gráfico por *corte* (columna *cut*),
+
+```{r facet_wrap}
+
+```
+
+Pero realmente... ¿hay alguno de los diamantes que tiene un precio realmente desorbitado para la calidad de su corte? Esto lo podemos saber con el gráfico llamado *boxplot*. Este es uno de los gráficos más útiles ya que nos muestra información estadística de cada variable. Prueba a usar con `geom_boxplot`, poniendo *cut* en el eje de las *x* y *price* en el eje de las y.
+
+```{r boxplot}
+
+```
+
+### Variables discretas o categóricas
+
+Vamos a ver qué cantidad de datos tenemos de cada corte y color. Para ello utiliza `geom_bar`. ¿Puedes intuir por qué `geom_bar` functiona y `geom_point` no?
+
+```{r cut_geom_bar}
+ggplot(data = diamonds, aes(x = cut))
+  
+```
+
+```{r cut_geom_point}
+ggplot(data = diamonds, aes(x = cut))
+ 
+```
+
+```{r color}
+
+```
