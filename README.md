@@ -27,3 +27,11 @@ en Kairós.
   - Aprendizaje no supervisado (4h)
       - PCA
       - k-means
+
+### Documentación complementaria
+
+Este curso se ha realizado gracias a decenas de información displonible
+para el público. Dado que no se puede enseñar todo, he recopilado la
+bibliografía en un [tablero de
+trello](https://trello.com/b/1RX5nQrA/kair%C3%B3s-clases) al que tenéis
+acceso.
