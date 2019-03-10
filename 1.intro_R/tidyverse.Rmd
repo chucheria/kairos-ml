@@ -76,6 +76,10 @@ install.packages('tidyverse')
 library(tidyverse)
 ```
 
+```{r include=F}
+library(tidyverse)
+library(nycflights13)
+```
 --
 
 Install and load the `nycflights13` package:
@@ -101,8 +105,6 @@ Use the `str` and `summary` on the flights dataset to answer the following quest
 # Filter with dplyr::filter
 
 Use the function `filter` to find all flights that:
-
---
 
 - Had an **arrival delay** of **two or more** hours. Hint: `>=`
 
@@ -230,3 +232,99 @@ select(flights, starts_with("dep_"), starts_with("arr_"))
 ---
 # Add new variables with dyplr::mutate
 
+Use `mutate` to add new computed columns:
+
+- Compare air_time with arr_time - dep_time. What do you expect to see? What do you see? What do you need to do to fix it?
+
+--
+
+*I expect that `air_time` is the difference between the arrival (`arr_time`) and departure times (`dep_time`). In other words, `air_time = arr_time - dep_time`*
+
+```{r, eval=F}
+flights_airtime <-
+  mutate(flights,
+    dep_time = (dep_time %/% 100 * 60 + dep_time %% 100) %% 1440,
+    arr_time = (arr_time %/% 100 * 60 + arr_time %% 100) %% 1440,
+    air_time_diff = air_time - arr_time + dep_time
+  )
+
+filter(flights_airtime, air_time_diff != 0)
+```
+
+---
+# Summarise data with dplyr::summarise
+
+Use `group_by` and `summarise` to get insights about the dataset:
+
+- Look at the number of cancelled flights per day. Is there a pattern? Is the proportion of cancelled flights related to the average delay? 
+
+We are going to introduce the *pipe* (`%>%`) and `ggplot` to see our result. The pipe prevents us to create a lot of intermediate variables, and occupy necessary memory. Following the previous question:
+
+--
+
+```{r eval=F}
+cancelled_delayed <- flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay)))
+
+```
+
+Which means: 
+
+- Over the dataset flights, I create a new column cancelled.
+- I can skip the *data* parameter because the pipe points to it.
+- I can perform multiple operations and assign them to *cancelled_delayed*.
+
+---
+# Summarise data with dplyr::summarise
+
+Group the data:
+
+```{r eval=F}
+cancelled_delayed <-
+  flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  group_by(year, month, day) 
+```
+
+--
+
+Summarise the data:
+
+```{r echo = T, results = 'hide'}
+cancelled_delayed <-
+  flights %>%
+  mutate(cancelled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  group_by(year, month, day) %>%
+  summarise(
+    prop_cancelled = mean(cancelled),
+    avg_dep_delay = mean(dep_delay, na.rm = TRUE)
+  )
+```
+
+**The pipe allows to do function composition in a readable way.**
+
+---
+# Plot the summary with ggplot2::ggplot
+
+`ggplot` works by layers, it applies the same philosophy as dplyr:
+
+--
+
+```{r fig.height=2, fig.align='center'}
+ggplot(cancelled_delayed, aes(x = avg_dep_delay, prop_cancelled))
+```
+
+--
+
+```{r fig.height=2, fig.align='center'}
+ggplot(cancelled_delayed, aes(x = avg_dep_delay, prop_cancelled)) +
+  geom_point()
+```
+
+---
+
+```{r, message=F, fig.height=5, fig.align='center'}
+ggplot(cancelled_delayed, aes(x = avg_dep_delay, prop_cancelled)) +
+  geom_point() +
+  geom_smooth()
+```
