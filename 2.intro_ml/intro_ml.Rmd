@@ -269,3 +269,86 @@ knitr::include_graphics('figs/k-fold.png')
   2. Evaluate that individual chunk’s error. 
 3. After you have all the errors for all the chunks, take the average.
 
+---
+class: inverse, center, middle
+
+# Overfitting and underfitting
+
+---
+# Overfitting
+
+Before we can prevent overfitting, we need to give the term a rigorous meaning. A predictive model is close to the truth when its predictions about future (test) data are accurate.
+
+- **Overfitting**: When we see the predictions for the model start to get worse on the test data. That’s because the model is becoming too complex and noisy, and it fits quirks in the training data that aren’t present in the test data.
+- When a model isn’t complex enough to fit even the training data, we call that **underfitting**.
+
+--
+
+There is a term called model **capacity** or **complexity**. Model capacity/complexity refers to the level of variation that the model can work with. The higher the capacity the more variation the model can cope with. For example, if I have a polynomial model, the linear model with error *E* is less complex than the cuadratic model with less error. The accuracy of the second is better but it is more complex. If I increase the polynomial dregree increases the complexity of the model but the error is smaller.  The model becomes very complex and fits the training data very well but unfortunately, it is a very weak for unseen data. 
+
+---
+# Preventing Overfitting
+
+**Regularization** in machine learning is the process of regularizing the parameters that constrain, regularizes, or shrinks the coefficient estimates towards zero. Note: this method is used for regression problems, cross-validation and feature ingeniering are methods you can apply to every problem.
+
+Let's consider the graph bellow:
+
+```{r overfitting, echo=F, fig.align='center', out.width = "30%"}
+knitr::include_graphics('https://chunml.github.io/images/tutorials/regularization/reg_graph.png')
+knitr::include_graphics('http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1533936356/Screen_Shot_2018-08-10_at_5.25.26_PM_ltnepj.png')
+knitr::include_graphics('http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1533936356/Screen_Shot_2018-08-10_at_5.25.32_PM_qmt5zt.png')
+```
+
+---
+# Preventing Overfitting
+
+- Imagine you got some noises in our training dataset, where the data’s magnitude is far different than the others, those noises will cause our model to put more weight into the coefficient of higher degree, leading to overfitting.
+
+- Imagine you are facing a problem where you are provided with a large dataset, and each of them contains many features. You don’t know which features to drop, and even worse if it turns out that every feature is fairly informative, which means that dropping some features will likely ruin the algorithm’s performance.
+
+**Through the use of regularization, you can make your model more succinct and reduce the noise in the dataset that might be coming from features that have little impact on what you are trying to model against.**
+
+
+---
+class: inverse, center, middle
+
+# The Bias-Variance Tradeoff
+
+---
+# Bias and variance
+
+Imagine that the center of the target is a model that perfectly predicts the correct values. Each hit represents an individual realization of our model, given the chance variability in the training data we gather. Sometimes we will get a good distribution of training data so we predict very well while sometimes our training data might be full of outliers or non-standard values resulting in poorer predictions. 
+
+```{r biasvar, echo=F, fig.align='center', out.width = "50%"}
+knitr::include_graphics('figs/bias-variance.png')
+```
+
+---
+# The error function
+
+If we are trying to predict *Y* given parameters *X*, we try to find *f* so that in *Y = f(X) + E* the error is almost 0. We may then estimate a model *g(X)* of *f* with an error function.
+
+In case of a linear model:
+
+```{r error, echo=F, fig.align='center', out.width = "30%"}
+knitr::include_graphics('figs/error-lineal.png')
+```
+```{r, echo=F, fig.align='center', out.width = "40%"}
+knitr::include_graphics('figs/biasvar-lineal.png')
+```
+
+In case of a classification problem with a knn model:
+
+```{r, echo=F, fig.align='center', out.width = "40%"}
+knitr::include_graphics('figs/biasvar-knn.png')
+```
+
+That third term, irreducible error, is the noise term. We want to be able to reduce both the bias and variance terms to 0. However there is a tradeoff between minimizing the bias and minimizing the variance.
+
+---
+
+In superviser learning:
+
+- **Underfitting** happens when a model unable to capture the underlying pattern of the data. These models usually have high bias and low variance. 
+
+- **Overfitting** happens when our model captures the noise along with the underlying pattern in data. It happens when we train our model a lot over noisy dataset. These models have low bias and high variance. 
