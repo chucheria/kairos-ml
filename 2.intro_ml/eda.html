@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Exploratory Data Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bea Hernández" />
+    <meta name="date" content="2019-03-12" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Exploratory Data Analysis
+## Part of the Data Science workflow
+### Bea Hernández
+### 2019-03-12
+
+---
+
+class: inverse, center, middle
+
+# Exploratory Data Analysis
+
+
+---
+
+We are going to perform an **Exploratory Data Analysis** on the *Titanic dataset* to later do **Feature selection**.
+
+EDA helps in:
+
+- Gain familiarity with the dataset
+- Identify feature distribution
+- Identify missing values
+- Do feature selection
+
+EDA includes between others:
+
+- Knowing the dimension of the dataset
+- Checking the variables
+- Looking for and filling missing values
+- Looking for outliers or weird observations
+- Checking the distribution of the variables
+- Cleaning the strings in the dataset
+
+---
+# Load libraries and data
+
+
+```r
+library(tidyverse)
+```
+
+--
+
+
+```r
+train &lt;- read_csv('data/titanic/train.csv')
+test &lt;- read_csv('data/titanic/test.csv')
+```
+
+---
+
+```r
+head(train, n = 2)
+```
+
+```
+## # A tibble: 2 x 12
+##   PassengerId Survived Pclass Name  Sex     Age SibSp Parch Ticket  Fare
+##         &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1           1        0      3 Brau… male     22     1     0 A/5 2…  7.25
+## 2           2        1      1 Cumi… fema…    38     1     0 PC 17… 71.3 
+## # … with 2 more variables: Cabin &lt;chr&gt;, Embarked &lt;chr&gt;
+```
+
+```r
+dim(train)
+```
+
+```
+## [1] 891  12
+```
+
+--
+
+
+```r
+head(test, n = 2)
+```
+
+```
+## # A tibble: 2 x 11
+##   PassengerId Pclass Name  Sex     Age SibSp Parch Ticket  Fare Cabin
+##         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;
+## 1         892      3 Kell… male   34.5     0     0 330911  7.83 &lt;NA&gt; 
+## 2         893      3 Wilk… fema…  47       1     0 363272  7    &lt;NA&gt; 
+## # … with 1 more variable: Embarked &lt;chr&gt;
+```
+
+```r
+dim(test)
+```
+
+```
+## [1] 418  11
+```
+
+---
+# Check for nulls
+
+
+```r
+map_df(train, ~sum(is.na(.)))
+```
+
+```
+## # A tibble: 1 x 12
+##   PassengerId Survived Pclass  Name   Sex   Age SibSp Parch Ticket  Fare
+##         &lt;int&gt;    &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;
+## 1           0        0      0     0     0   177     0     0      0     0
+## # … with 2 more variables: Cabin &lt;int&gt;, Embarked &lt;int&gt;
+```
+
+```r
+map_df(test, ~sum(is.na(.)))
+```
+
+```
+## # A tibble: 1 x 11
+##   PassengerId Pclass  Name   Sex   Age SibSp Parch Ticket  Fare Cabin
+##         &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1           0      0     0     0    86     0     0      0     1   327
+## # … with 1 more variable: Embarked &lt;int&gt;
+```
+
+--
+
+There's a lot of cabin information missing. If we take a look at the [data information](https://www.kaggle.com/c/titanic/data) and [looking](https://www.kaggle.com/c/titanic/discussion/4693) for the exact meaning on the *cabin* values, the first class had the top decks, it makes sense that the people towards the top were closer to the lifeboats, ergo more likely to survive. So we will keep it as predictor for now even if there's a lot of data missing.
+
+---
+# Check for correlation between variables
+
+We are going to check the *train* dataset because is the one with the target value, and we want to have an image on the impact of each feature on the target.
+
+--
+
+But
+
+**What is correlation?**
+
+---
+class: inverse, center, middle
+
+# Correlation
+
+---
+# Correlation
+
+**Correlation** is a statistical measure (expressed as a number) that describes the size and direction of a relationship between two or more variables. 
+
+Imagine the weather getting warmer and the ice-cream sales getting higher, if we plot both variables we will see a line with a positive slope, we can say both variables are correlated.
+
+&lt;img src="https://www.mathsisfun.com/data/images/correlation-examples.svg" style="display: block; margin: auto;" /&gt;
+
+--
+
+This is the definition of the *Pearson's correlation coefficient*, which is a *linear* correlation between *continuous* variables.
+
+--
+
+## What does this mean?
+
+- One variable **might** cause the other
+- They *may* be influence by other variable
+- *Could* be random
+
+---
+# Correlation
+
+Correlation between *categorical* variables can be done with *Chi-Squared* test of independence: we call two variables independent if the probability distribution of one variables is nor affected by the presence of another.
+
+--
+
+Let's see this in an example with the column target *Survived* and the *Pclass* which indicates the passenger class. Our hypothesis is that the variables are independent, we will check the *p-value* to test that hypotheses.
+
+
+```r
+chisq.test(as.factor(train$Pclass), as.factor(train$Survived))
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  as.factor(train$Pclass) and as.factor(train$Survived)
+## X-squared = 102.89, df = 2, p-value &lt; 2.2e-16
+```
+
+--
+
+The *p-value* is almost 0, this means that the probability that both variables are independent is almost 0, so they are highly correlated. Is this too subtle? Well... yeah. Not all correlation is easy to prove. But to have a visual look at the correlation we can plot and see.
+
+---
+# Correlation
+
+
+```r
+ggplot(train, aes(Pclass)) +
+  geom_bar(aes(fill = as.factor(Survived)))
+```
+
+&lt;img src="eda_files/figure-html/survived-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+
+# Exploratory data analysis 
+
+---
+# Filling missing data
+
+So, now we know how to do correlation between two variables we can do something else from the prior list. 
+
+--
+
+Filling the missing data is one of the most *personal* tasks of the EDA. We are making up data so our observation is complete and not descarted in the model or that our new complete data is giving different information. 
+
+--
+
+
+```r
+map_df(train, ~sum(is.na(.)))
+```
+
+```
+## # A tibble: 1 x 12
+##   PassengerId Survived Pclass  Name   Sex   Age SibSp Parch Ticket  Fare
+##         &lt;int&gt;    &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;
+## 1           0        0      0     0     0   177     0     0      0     0
+## # … with 2 more variables: Cabin &lt;int&gt;, Embarked &lt;int&gt;
+```
+
+--
+
+We are going to fill *Age* and *Embarked* with median value, so it doesn't aggregate too much weight. The problem is *Cabin*, we said before the Cabin would determine how closer were you to the surface, but the truth is that *Pclass* gives us a similar information, being 1st class the closer to the surface.
+
+---
+
+
+```r
+library(magrittr)
+train %&lt;&gt;% 
+  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
+          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %&gt;%
+  select(-Cabin)
+
+head(train)
+```
+
+```
+## # A tibble: 6 x 11
+##   PassengerId Survived Pclass Name  Sex     Age SibSp Parch Ticket  Fare
+##         &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
+## 1           1        0      3 Brau… male     22     1     0 A/5 2…  7.25
+## 2           2        1      1 Cumi… fema…    38     1     0 PC 17… 71.3 
+## 3           3        1      3 Heik… fema…    26     0     0 STON/…  7.92
+## 4           4        1      1 Futr… fema…    35     1     0 113803 53.1 
+## 5           5        0      3 Alle… male     35     0     0 373450  8.05
+## 6           6        0      3 Mora… male     28     0     0 330877  8.46
+## # … with 1 more variable: Embarked &lt;chr&gt;
+```
+
+---
+class: inverse, center, middle
+
+# Feature Selection
+
+---
+
+# Feature selection
+
+When presented data with very high dimensionality, models usually choke because:
+
+- **Training time** increases exponentially with number of features.
+- Models have increasing risk of **overfitting** with increasing number of features.
+
+**Feature Selection** methods helps with these problems by **reducing the dimensions** without much loss of the total information. It also helps to **make sense** of the features and its importance.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

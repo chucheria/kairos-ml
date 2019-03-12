@@ -1,0 +1,200 @@
+---
+title: "Exploratory Data Analysis"
+subtitle: "Part of the Data Science workflow"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# Exploratory Data Analysis
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
+        cache = TRUE, fig.retina = 3)
+```
+
+---
+
+We are going to perform an **Exploratory Data Analysis** on the *Titanic dataset* to later do **Feature selection**.
+
+EDA helps in:
+
+- Gain familiarity with the dataset
+- Identify feature distribution
+- Identify missing values
+- Do feature selection
+
+EDA includes between others:
+
+- Knowing the dimension of the dataset
+- Checking the variables
+- Looking for and filling missing values
+- Looking for outliers or weird observations
+- Checking the distribution of the variables
+- Cleaning the strings in the dataset
+
+---
+# Load libraries and data
+
+```{r import_libraries, message=F}
+library(tidyverse)
+```
+
+--
+
+```{r import_data, message=F}
+train <- read_csv('data/titanic/train.csv')
+test <- read_csv('data/titanic/test.csv')
+```
+
+---
+```{r dim_train, message=F}
+head(train, n = 2)
+dim(train)
+```
+
+--
+
+```{r dim_test, message=F}
+head(test, n = 2)
+dim(test)
+```
+
+---
+# Check for nulls
+
+```{r nulls}
+map_df(train, ~sum(is.na(.)))
+map_df(test, ~sum(is.na(.)))
+```
+
+--
+
+There's a lot of cabin information missing. If we take a look at the [data information](https://www.kaggle.com/c/titanic/data) and [looking](https://www.kaggle.com/c/titanic/discussion/4693) for the exact meaning on the *cabin* values, the first class had the top decks, it makes sense that the people towards the top were closer to the lifeboats, ergo more likely to survive. So we will keep it as predictor for now even if there's a lot of data missing.
+
+---
+# Check for correlation between variables
+
+We are going to check the *train* dataset because is the one with the target value, and we want to have an image on the impact of each feature on the target.
+
+--
+
+But
+
+**What is correlation?**
+
+---
+class: inverse, center, middle
+
+# Correlation
+
+---
+# Correlation
+
+**Correlation** is a statistical measure (expressed as a number) that describes the size and direction of a relationship between two or more variables. 
+
+Imagine the weather getting warmer and the ice-cream sales getting higher, if we plot both variables we will see a line with a positive slope, we can say both variables are correlated.
+
+```{r correlation, fig.align='center', echo=F}
+knitr::include_graphics('https://www.mathsisfun.com/data/images/correlation-examples.svg')
+```
+
+--
+
+This is the definition of the *Pearson's correlation coefficient*, which is a *linear* correlation between *continuous* variables.
+
+--
+
+## What does this mean?
+
+- One variable **might** cause the other
+- They *may* be influence by other variable
+- *Could* be random
+
+---
+# Correlation
+
+Correlation between *categorical* variables can be done with *Chi-Squared* test of independence: we call two variables independent if the probability distribution of one variables is nor affected by the presence of another.
+
+--
+
+Let's see this in an example with the column target *Survived* and the *Pclass* which indicates the passenger class. Our hypothesis is that the variables are independent, we will check the *p-value* to test that hypotheses.
+
+```{r chi_test}
+chisq.test(as.factor(train$Pclass), as.factor(train$Survived))
+```
+
+--
+
+The *p-value* is almost 0, this means that the probability that both variables are independent is almost 0, so they are highly correlated. Is this too subtle? Well... yeah. Not all correlation is easy to prove. But to have a visual look at the correlation we can plot and see.
+
+---
+# Correlation
+
+```{r survived, fig.height=6, fig.align='center'}
+ggplot(train, aes(Pclass)) +
+  geom_bar(aes(fill = as.factor(Survived)))
+```
+
+---
+class: inverse, center, middle
+
+# Exploratory data analysis 
+
+---
+# Filling missing data
+
+So, now we know how to do correlation between two variables we can do something else from the prior list. 
+
+--
+
+Filling the missing data is one of the most *personal* tasks of the EDA. We are making up data so our observation is complete and not descarted in the model or that our new complete data is giving different information. 
+
+--
+
+```{r nas, message=F}
+map_df(train, ~sum(is.na(.)))
+```
+
+--
+
+We are going to fill *Age* and *Embarked* with median value, so it doesn't aggregate too much weight. The problem is *Cabin*, we said before the Cabin would determine how closer were you to the surface, but the truth is that *Pclass* gives us a similar information, being 1st class the closer to the surface.
+
+---
+
+```{r replace, message=F}
+library(magrittr)
+train %<>% 
+  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
+          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %>%
+  select(-Cabin)
+
+head(train)
+```
+
+---
+class: inverse, center, middle
+
+# Feature Selection
+
+---
+
+# Feature selection
+
+When presented data with very high dimensionality, models usually choke because:
+
+- **Training time** increases exponentially with number of features.
+- Models have increasing risk of **overfitting** with increasing number of features.
+
+**Feature Selection** methods helps with these problems by **reducing the dimensions** without much loss of the total information. It also helps to **make sense** of the features and its importance.
+
+
+
+
