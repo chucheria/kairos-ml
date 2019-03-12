@@ -4,7 +4,7 @@
     <title>RMarkdown</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-09" />
+    <meta name="date" content="2019-03-12" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # RMarkdown
 ## Show and reproduce with RMarkdown
 ### Bea Hernández
-### 2019-03-09
+### 2019-03-12
 
 ---
 
@@ -80,7 +80,7 @@ This is a minimal example of yalm options in an RMarkdown document. This will sh
 ```yalm
 title: "Hello R Markdown"
 author: "Awesome Me"
-date: "2019-03-09"
+date: "2019-03-12"
 output: html_document
 ```
 
@@ -92,7 +92,7 @@ You can even execute R code!
 title: "RMarkdown"
 subtitle: "Show and reproduce with RMarkdown"
 author: "Bea Hernández"
-date: "2019-03-09"
+date: "2019-03-12"
 output: 
   xaringan::moon_reader:
     css: [default, metropolis, metropolis-fonts]
@@ -135,11 +135,11 @@ There's a lot of options for your code chunks, you can take a look of all in the
 
 You can render your document directly on RStudio or from the console typing: 
 
-rmarkdown::render('foo.Rmd', 'pdf_document')
+*rmarkdown::render('foo.Rmd', 'pdf_document')*
 
 --
 
-Lastly, there's an *unofficial* way to compile Rmd documents: the function xaringan::inf_mr(), or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the xaringan package, which is available on CRAN. The main advantage of this way is LiveReload.
+Lastly, there's an *unofficial* way to compile Rmd documents: the function *xaringan::inf_mr()*, or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the *xaringan* package, which is available on CRAN. The main advantage of this way is LiveReload.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

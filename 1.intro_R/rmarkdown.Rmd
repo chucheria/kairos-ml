@@ -117,8 +117,8 @@ There's a lot of options for your code chunks, you can take a look of all in the
 
 You can render your document directly on RStudio or from the console typing: 
 
-rmarkdown::render('foo.Rmd', 'pdf_document')
+*rmarkdown::render('foo.Rmd', 'pdf_document')*
 
 --
 
-Lastly, there's an *unofficial* way to compile Rmd documents: the function xaringan::inf_mr(), or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the xaringan package, which is available on CRAN. The main advantage of this way is LiveReload.
+Lastly, there's an *unofficial* way to compile Rmd documents: the function *xaringan::inf_mr()*, or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the *xaringan* package, which is available on CRAN. The main advantage of this way is LiveReload.
