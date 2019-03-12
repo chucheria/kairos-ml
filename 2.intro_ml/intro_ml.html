@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>What is R?</title>
+    <title>Intro to Machine Learning</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
     <meta name="date" content="2019-03-12" />
@@ -13,8 +13,8 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# What is R?
-## Thinking with R
+# Intro to Machine Learning
+## Training and testing
 ### Bea Hernández
 ### 2019-03-12
 
@@ -64,6 +64,7 @@ class: inverse, center, middle
 # Let's model
 
 ---
+# Classification on the iris data
 
 We are going to do a little (more than tested) model to get to know what will come next. To do that we are going to use the `caret` package, so go ahead and install it. There's some kind of error installing `caret` in OSX, please visit [this question in SO](https://stackoverflow.com/questions/25990296/how-to-include-omp-h-in-os-x/) to fix it.
 
@@ -96,6 +97,7 @@ summary(iris)
 ```
 
 ---
+# Train and test
 
 We are going to split the data in *train* and *test*. With the *train* dataset we will *teach* our model for test it later on the unseen *test* dataset.
 
@@ -104,7 +106,7 @@ We are going to split the data in *train* and *test*. With the *train* dataset w
 
 ```r
 set.seed(42)
-ind &lt;- sample(c(TRUE, FALSE), nrow(iris), replace=TRUE, prob=c(0.8, 0.2))
+ind &lt;- sample(c(TRUE, FALSE), nrow(iris), replace = TRUE, prob = c(0.8, 0.2))
 train &lt;- iris[ind, ]
 test &lt;- iris[!ind, ]
 
@@ -151,10 +153,12 @@ We will see two metrics to evaluate the model:
 - Kappa: like classification accuracy, except that it is normalized at the baseline of random chance on your dataset.
 
 ---
+# Train
 
 
 ```r
-model_fit &lt;- train(Species~., data = train, method = "knn", tuneGrid = expand.grid(k = 1:25))
+model_fit &lt;- train(Species~., data = train, method = "knn", 
+                   tuneGrid = expand.grid(k = 1:25))
 model_fit
 ```
 
@@ -202,10 +206,7 @@ model_fit
 ```
 
 ---
-
-Now it's the time to predict on the "unknown" *test* dataset:
-
---
+# Predict
 
 
 ```r
@@ -266,8 +267,8 @@ We typically do a **70/30** split or **80/20** split (depending on the size of o
 
 There are two major assumptions that we work with when doing these training/test splits:
 
-- The data is a fair representation of the actual processes that you want to model.
-- The processes that you want to model are relatively stable over time and that a model built with last month’s data should accurately reflect next month’s data.
+- The data is a **fair** representation of the actual processes that you want to model.
+- The processes that you want to model are **relatively stable** over time and that a model built with last month’s data should accurately reflect next month’s data.
 
 --
 
@@ -288,7 +289,7 @@ It is a solid way of validating that model. From a statistical standpoint, any m
 
 Can I do the sampling again if I'm not happy with the model? **Of course**.
 
-Doing feature selection is very important but choosing a right sample is too. One that is unbiased, that doesn't overfit/underfit our data, and that is unvariance is the *ideal* train set (almost never achiavable, we will see that in the *bias-variance tradeoff*).
+Doing feature selection is very important but choosing a *right sample* is too. One that is **unbiased**, that doesn't **overfit/underfit** our data, and that is **unvariance** is the *ideal* train set (almost never achiavable, we will see that in the *bias-variance tradeoff*).
 
 ---
 class: inverse, center, middle
@@ -302,7 +303,7 @@ class: inverse, center, middle
 
 *RRSE - Root relative squared error*, *RAE - Relative Absolute Error* we measure in percentage how mucho the feature deviates sfrom its average value. They are relative errors.
 
-&lt;img src="https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/rmse.png?token=AHVv5N-4Dj5Vwv09l61gWhUN9hXnE86fks5ch1KIwA%3D%3D" width="40%" /&gt;&lt;img src="https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/mae.png?token=AHVv5NgCZlyIfhpkoKFtfA1qZuoV2NJ7ks5ch1GawA%3D%3D" width="40%" /&gt;&lt;img src="https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/rrse.png?token=AHVv5EfKcRa9qMOjVPQCoMkUHB-A-haNks5ch1HfwA%3D%3D" width="40%" /&gt;&lt;img src="https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/rae.png?token=AHVv5IdraxTUdVylwjd06IPwiY_5E0PEks5ch1IHwA%3D%3D" width="40%" /&gt;
+&lt;img src="figs/rmse.png" width="40%" style="display: block; margin: auto;" /&gt;&lt;img src="figs/mae.png" width="40%" style="display: block; margin: auto;" /&gt;&lt;img src="figs/rrse.png" width="40%" style="display: block; margin: auto;" /&gt;&lt;img src="figs/rae.png" width="40%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -310,13 +311,30 @@ class: inverse, center, middle
 
 We calculate the *confussion matrix*, in which the model output predicted classes are compared to the actual classes and the count of the model output in the cells of the matrix. This informs you of the *true positives*, *true negatives*, *false positives*, *false negatives*. This numbers allow us to get metrics on the model: 
 
+&lt;img src="figs/confussionmatrix.png" width="1875" style="display: block; margin: auto;" /&gt;
+
 - *Sensitivity or recall*: When it is actually the positive result, how often does it predict correctly?
+
+&lt;img src="figs/sensitivity.png" width="30%" style="display: block; margin: auto;" /&gt;
+
+---
+# Classification
+
 - *Specificity*, When it is actually the negative result, how often does it predict correctly?
+
+&lt;img src="figs/specifity.png" width="30%" style="display: block; margin: auto;" /&gt;
+
 - *Precision*: When it predicts the positive result, how often is it correct?
+
+&lt;img src="figs/precision.png" width="30%" style="display: block; margin: auto;" /&gt;
+
 - *Accuracy*: How often is the classifier correct?
+
+&lt;img src="figs/accuracy.png" width="30%" style="display: block; margin: auto;" /&gt;
+
 - *F1 Score*: Harmonic mean of precision and recall.
 
-![](https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/confussionmatrix.png?token=AHVv5LABCEhoI5ieR0E0BZAoAgxduUHvks5ch1KtwA%3D%3D)&lt;!-- --&gt;
+&lt;img src="figs/f1.png" width="30%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: inverse, center, middle
@@ -330,7 +348,7 @@ The process of training and testing data is still somewhat limited, however. In 
 
 **Cross-validation** is a statistical technique by which you take your entire dataset, split it into a number of small train/test chunks, evaluate the error for each chunk, and then average those final errors. This approach winds up being a more accurate way of assessing whether your modeling approach has any issues that could be hidden in various combinations of the training and test parts of the dataset.
 
-&lt;img src="https://raw.githubusercontent.com/chucheria/kairos-ml/master/2.intro_ml/figs/k-fold.png?token=AHVv5EmUy76QTDrX00HJAbgCpLyEnUU2ks5ch1MWwA%3D%3D" width="40%" /&gt;
+&lt;img src="figs/k-fold.png" width="40%" style="display: block; margin: auto;" /&gt;
 
 ---
 # k-fold Cross-validation
@@ -340,231 +358,6 @@ The process of training and testing data is still somewhat limited, however. In 
   1. Split the data into a smaller train/test set.
   2. Evaluate that individual chunk’s error. 
 3. After you have all the errors for all the chunks, take the average.
-
----
-class: inverse, center, middle
-
-# Before the model
-
----
-
-We are going to perform an **Exploratory Data Analysis** on the *Titanic dataset* to later do **Feature selection**.
-
-EDA helps in:
-
-- Gain familiarity with the dataset
-- Identify feature distribution
-- Identify missing values
-- Do feature selection
-
-EDA includes between others:
-
-- Knowing the dimension of the dataset
-- Checking the variables
-- Looking for and filling missing values
-- Looking for outliers or weird observations
-- Checking the distribution of the variables
-- Cleaning the strings in the dataset
-
----
-# Load libraries and data
-
-
-```r
-library(tidyverse)
-```
-
---
-
-
-```r
-train &lt;- read_csv('data/titanic/train.csv')
-test &lt;- read_csv('data/titanic/test.csv')
-```
-
----
-
-```r
-head(train, n = 2)
-```
-
-```
-## # A tibble: 2 x 12
-##   PassengerId Survived Pclass Name  Sex     Age SibSp Parch Ticket  Fare
-##         &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt;
-## 1           1        0      3 Brau… male     22     1     0 A/5 2…  7.25
-## 2           2        1      1 Cumi… fema…    38     1     0 PC 17… 71.3 
-## # … with 2 more variables: Cabin &lt;chr&gt;, Embarked &lt;chr&gt;
-```
-
-```r
-dim(train)
-```
-
-```
-## [1] 891  12
-```
-
-```r
-head(test, n = 2)
-```
-
-```
-## # A tibble: 2 x 11
-##   PassengerId Pclass Name  Sex     Age SibSp Parch Ticket  Fare Cabin
-##         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;
-## 1         892      3 Kell… male   34.5     0     0 330911  7.83 &lt;NA&gt; 
-## 2         893      3 Wilk… fema…  47       1     0 363272  7    &lt;NA&gt; 
-## # … with 1 more variable: Embarked &lt;chr&gt;
-```
-
-```r
-dim(test)
-```
-
-```
-## [1] 418  11
-```
----
-# Check for nulls
-
-
-```r
-map_df(train, ~sum(is.na(.)))
-```
-
-```
-## # A tibble: 1 x 12
-##   PassengerId Survived Pclass  Name   Sex   Age SibSp Parch Ticket  Fare
-##         &lt;int&gt;    &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;
-## 1           0        0      0     0     0   177     0     0      0     0
-## # … with 2 more variables: Cabin &lt;int&gt;, Embarked &lt;int&gt;
-```
-
-```r
-map_df(test, ~sum(is.na(.)))
-```
-
-```
-## # A tibble: 1 x 11
-##   PassengerId Pclass  Name   Sex   Age SibSp Parch Ticket  Fare Cabin
-##         &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1           0      0     0     0    86     0     0      0     1   327
-## # … with 1 more variable: Embarked &lt;int&gt;
-```
-
-There's a lot of cabin information missing. If we take a look at the [data information](https://www.kaggle.com/c/titanic/data) and [looking](https://www.kaggle.com/c/titanic/discussion/4693) for the exact meaning on the *cabin* values, the first class had the top decks, it makes sense that the people towards the top were closer to the lifeboats, ergo more likely to survive. So we will keep it as predictor for now even if there's a lot of data missing.
-
----
-# Check for correlation between variables
-
-We are going to check the *train* dataset because is the one with the target value, and we want to have an image on the impact of each feature on the target.
-
-But
-
-**What is correlation?**
-
----
-# Correlation
-
-**Correlation** is a statistical measure (expressed as a number) that describes the size and direction of a relationship between two or more variables. 
-
-Imagine the weather getting warmer and the ice-cream sales getting higher, if we plot both variables we will see a line with a positive slope, we can say both variables are correlated.
-
-![](https://www.mathsisfun.com/data/images/correlation-examples.svg)
-
-This is the definition of the *Pearson's correlation coefficient*, which is a *linear* correlation between *continuous* variables.
-
-## What does this mean?
-
-- One variable **might** cause the other
-- They *may* be influence by other variable
-- *Could* be random
-
----
-# Correlation
-
-Correlation between *categorical* variables can be done with *Chi-Squared* test of independence: we call two variables independent if the probability distribution of one variables is nor affected by the presence of another.
-
-Let's see this in an example with the column target *Survived* and the *Pclass* which indicates the passenger class. Our hypothesis is that the variables are independent, we will check the *p-value* to test that hypotheses.
-
-
-```r
-chisq.test(as.factor(train$Pclass), as.factor(train$Survived))
-```
-
-```
-## 
-## 	Pearson's Chi-squared test
-## 
-## data:  as.factor(train$Pclass) and as.factor(train$Survived)
-## X-squared = 102.89, df = 2, p-value &lt; 2.2e-16
-```
-The *p-value* is almost 0, this means that the probability that both variables are independent is almost 0, so they are highly correlated. Is this too subtle? Well... yeah. Not all correlation is easy to prove. But to have a visual look at the correlation we can plot and see.
-
----
-# Correlation
-
-
-```r
-ggplot(train, aes(Pclass)) +
-  geom_bar(aes(fill = as.factor(Survived)))
-```
-
-&lt;img src="intro_ml_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" /&gt;
-
----
-class: inverse, center, middle
-
-# Exploratory data analysis 
-
----
-# Filling missing data
-
-So, now we know how to do correlation between two variables we can do something else from the prior list. 
-
-Filling the missing data is one of the most *personal* tasks of the EDA. We are making up data so our observation is complete and not descarted in the model or that our new complete data is giving different information. 
-
-
-```r
-map_df(train, ~sum(is.na(.)))
-```
-
-```
-## # A tibble: 1 x 12
-##   PassengerId Survived Pclass  Name   Sex   Age SibSp Parch Ticket  Fare
-##         &lt;int&gt;    &lt;int&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;  &lt;int&gt; &lt;int&gt;
-## 1           0        0      0     0     0   177     0     0      0     0
-## # … with 2 more variables: Cabin &lt;int&gt;, Embarked &lt;int&gt;
-```
-
-We are going to fill *Age* and *Embarked* with median value, so it doesn't aggregate too much weight. The problem is *Cabin*, we said before the Cabin would determine how closer were you to the surface, but the truth is that *Pclass* gives us a similar information, being 1st class the closer to the surface.
-
----
-
-
-```r
-library(magrittr)
-train %&lt;&gt;% 
-  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
-          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %&gt;%
-  select(-Cabin)
-```
-
----
-
-# Feature selection
-
-When presented data with very high dimensionality, models usually choke because:
-
-- **Training time** increases exponentially with number of features.
-- Models have increasing risk of **overfitting**&lt;sup&gt;1&lt;sup&gt; with increasing number of features.
-
-**Feature Selection** methods helps with these problems by **reducing the dimensions** without much loss of the total information. It also helps to **make sense** of the features and its importance.
-
-.footnote[
-[1] We will learn *overfitting* eventually.
-]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
