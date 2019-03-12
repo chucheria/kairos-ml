@@ -1,0 +1,34 @@
+---
+title: "The titanic Dataset"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+```{r load_packages}
+library(tidyverse)
+```
+
+```{r load_data}
+train <- read_csv('data/titanic/train.csv')
+test <- read_csv('data/titanic/test.csv')
+test$Survived <- NA
+full <- rbind(train, test)
+```
+
+```{r explore_full}
+str(full)
+dim(full)
+
+summary(full)
+```
+
+```{r missing_values}
+library(visdat)
+vis_dat(full)
+vis_miss(full)
+```
