@@ -74,8 +74,11 @@ class: center, middle, inverse
 # RStudio
 
 ---
+# RStudio
 
-![RStudio]('figs/rstudio.png')
+```{r, fig.align='center', echo=F}
+knitr::include_graphics('figs/rstudio.png')
+```
 
 ---
 class: center, middle, inverse
@@ -359,6 +362,12 @@ str(arrest)
 ```
 
 ---
+class: middle, inverse, center
+
+# I want more
+
+---
+
 # Packages and help
 
 ## Packages
