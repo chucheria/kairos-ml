@@ -4,7 +4,7 @@
     <title>RMarkdown</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-12" />
+    <meta name="date" content="2019-03-13" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # RMarkdown
 ## Show and reproduce with RMarkdown
 ### Bea Hernández
-### 2019-03-12
+### 2019-03-13
 
 ---
 
@@ -29,11 +29,11 @@ class: inverse, center, middle
 ---
 # What is RMarkdown?
 
-RMarkdown is a tool within RStudio that allows you to write documents, presentations, or webpages that combine written text with analytical code.
+RMarkdown is a **tool** *within RStudio* that allows you to write documents, presentations, or webpages that combine written text with analytical code.
 
-- The text in the document can be fully formatted in a report style (e.g., with headers, bolded text, hyperlinks, etc.)
-- You can choose to make your code visible or not
-- Documents can be output as PDFs, Word Documents, HTML, and other formats
+- The text in the document can be **fully formatted** in a report style (e.g., with headers, bolded text, hyperlinks, etc.)
+- You can choose to make your **code** visible or not
+- Documents can be **output** as PDFs, Word Documents, HTML, and other formats
 
 --
 
@@ -63,12 +63,12 @@ library(rmarkdown)
 
 To open a new document use RStudio, this way you'll get an example script to guide you:
 
-![](https://d33wubrfki0l68.cloudfront.net/bf6f5a7e151b6d29054337f2af2d04b1a8f791ce/3a8c1/articles/images/rmd-new.png)
+&lt;img src="https://d33wubrfki0l68.cloudfront.net/bf6f5a7e151b6d29054337f2af2d04b1a8f791ce/3a8c1/articles/images/rmd-new.png" style="display: block; margin: auto;" /&gt;
 
 ---
 # Document orientation
 
-![]('figs/structure.png')
+&lt;img src="figs/structure.png" style="display: block; margin: auto;" /&gt;
 
 There are three basic components of an R Markdown document: the metadata (YALM), text (Markdown), and code (R).
 
@@ -80,7 +80,7 @@ This is a minimal example of yalm options in an RMarkdown document. This will sh
 ```yalm
 title: "Hello R Markdown"
 author: "Awesome Me"
-date: "2019-03-12"
+date: "r Sys.Date()"
 output: html_document
 ```
 
@@ -92,7 +92,7 @@ You can even execute R code!
 title: "RMarkdown"
 subtitle: "Show and reproduce with RMarkdown"
 author: "Bea Hernández"
-date: "2019-03-12"
+date: "2019-03-13"
 output: 
   xaringan::moon_reader:
     css: [default, metropolis, metropolis-fonts]
@@ -140,6 +140,8 @@ You can render your document directly on RStudio or from the console typing:
 --
 
 Lastly, there's an *unofficial* way to compile Rmd documents: the function *xaringan::inf_mr()*, or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the *xaringan* package, which is available on CRAN. The main advantage of this way is LiveReload.
+
+The *xaringan* package is an easy way to make slide presentations including executable code and all perks of *rmarkdown*!
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -23,11 +23,11 @@ options(htmltools.dir.version = FALSE)
 ---
 # What is RMarkdown?
 
-RMarkdown is a tool within RStudio that allows you to write documents, presentations, or webpages that combine written text with analytical code.
+RMarkdown is a **tool** *within RStudio* that allows you to write documents, presentations, or webpages that combine written text with analytical code.
 
-- The text in the document can be fully formatted in a report style (e.g., with headers, bolded text, hyperlinks, etc.)
-- You can choose to make your code visible or not
-- Documents can be output as PDFs, Word Documents, HTML, and other formats
+- The text in the document can be **fully formatted** in a report style (e.g., with headers, bolded text, hyperlinks, etc.)
+- You can choose to make your **code** visible or not
+- Documents can be **output** as PDFs, Word Documents, HTML, and other formats
 
 --
 
@@ -47,7 +47,7 @@ RMarkdown is a tool within RStudio that allows you to write documents, presentat
 
 RMarkdown is a package like any other so:
 
-```{r eval=F}
+```{r install, eval=F}
 install.packages('rmarkdown')
 library(rmarkdown)
 ```
@@ -56,12 +56,16 @@ library(rmarkdown)
 
 To open a new document use RStudio, this way you'll get an example script to guide you:
 
-![](https://d33wubrfki0l68.cloudfront.net/bf6f5a7e151b6d29054337f2af2d04b1a8f791ce/3a8c1/articles/images/rmd-new.png)
+```{r, fig.align='center', echo=F}
+knitr::include_graphics('https://d33wubrfki0l68.cloudfront.net/bf6f5a7e151b6d29054337f2af2d04b1a8f791ce/3a8c1/articles/images/rmd-new.png')
+```
 
 ---
 # Document orientation
 
-![]('figs/structure.png')
+```{r, fig.align='center', echo=F}
+knitr::include_graphics('figs/structure.png')
+```
 
 There are three basic components of an R Markdown document: the metadata (YALM), text (Markdown), and code (R).
 
@@ -73,7 +77,7 @@ This is a minimal example of yalm options in an RMarkdown document. This will sh
 ```yalm
 title: "Hello R Markdown"
 author: "Awesome Me"
-date: "`r Sys.Date()`"
+date: "r Sys.Date()"
 output: html_document
 ```
 
@@ -122,3 +126,5 @@ You can render your document directly on RStudio or from the console typing:
 --
 
 Lastly, there's an *unofficial* way to compile Rmd documents: the function *xaringan::inf_mr()*, or equivalently, the RStudio addin “Infinite Moon Reader”. Obviously, this requires you to install the *xaringan* package, which is available on CRAN. The main advantage of this way is LiveReload.
+
+The *xaringan* package is an easy way to make slide presentations including executable code and all perks of *rmarkdown*!
