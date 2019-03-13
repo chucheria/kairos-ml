@@ -26,9 +26,10 @@ class: middle
 - R is **‘GNU S’** (free software under the GPL License)<sup>1</sup>
 - R is **language and environment**
 - R is for **statistical computing** and **graphics**
+- R is developed by the [R Foundation](https://www.r-project.org/foundation/)
 
 .footnote[
-[1] https://cran.r-project.org/
+[1] [CRAN](https://cran.r-project.org/)
 ]
 
 ---
@@ -46,14 +47,14 @@ class: inverse, center, middle
 ```bash
 $ R
 
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
+R version 3.5.2 (2018-12-20) -- "Eggshell Igloo"
 Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.5.0 (64-bit)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ```
 
 --
 
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. There are other IDEs:
+You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. Here are other IDEs:
 
 - [Emacs](https://ess.r-project.org/)
 - [PyCharm](https://plugins.jetbrains.com/plugin/6632-r-language-support)
@@ -104,6 +105,24 @@ class: center, middle, inverse
 ---
 class: center, middle, inverse
 
+# R Projects
+
+---
+# Project-oriented workflow
+
+- Don't save the `.RData`
+- Don't set absolute paths on your code
+- When you launch RStudio in project *X* the IDE sets working directory to the project's folder.
+- When you move in RStudio from project *X* to project *Y*, it restarts the R session, sets the working directory, and picks up where you left off.
+- You are able to have more than one project opened, each one gets its own R process.
+
+## The .Rproj
+
+The previous workflow is possible thanks to the `.Rproj` file created when you open a project for the first time.
+
+---
+class: center, middle, inverse
+
 # R basics
 
 Let's do some basic R in the console!
@@ -111,7 +130,7 @@ Let's do some basic R in the console!
 
 # Basic math
 
-```{r eval=FALSE}
+```{r sum, eval=FALSE}
 5+7
 ```
 
@@ -119,7 +138,7 @@ Let's do some basic R in the console!
 
 Store the result in a variable. The assignment operator `<-` is read as `gets` or in Spanish as `asignar`. To view de content of the variable just type the variable:
 
-```{r eval=FALSE}
+```{r assign, eval=FALSE}
 x <- 5 + 7
 x
 ```
@@ -131,7 +150,7 @@ The easiest way to create a vector is with the `c()` function (*concatenate* or 
 
 --
 
-```{r eval=FALSE}
+```{r concatenate, eval=FALSE}
 c(1.1, 9, 3.14)
 z <- c(1.1, 9, 3.14)
 ```
@@ -140,7 +159,7 @@ z <- c(1.1, 9, 3.14)
 
 Do you have a question about any function? Just type `?function` in the console and the help will magically appear. Try it now:
 
-```{r eval=FALSE}
+```{r help, eval=FALSE}
 ?c
 ```
 
@@ -148,25 +167,25 @@ Do you have a question about any function? Just type `?function` in the console 
 
 We can combine vectors with the same function:
 
-```{r eval=FALSE}
+```{r combine, eval=FALSE}
 c(1, z, 2)
 ```
 
 --
 
-And perform arithmetic expressions on vectors. Common arithmetic operators are `+`, `-`, `/`, `^`, `%%`.
+And perform arithmetic expressions on vectors: `+`, `-`, `/`, `^`, `%%`.
 
-```{r eval=FALSE}
+```{r change, eval=FALSE}
 z * 2 + 100
 ```
 
-When you do this R is a vector of 2: `c(2, 2, 2)`, and another one of 100.
+2 change to `c(2, 2, 2)`, and 100 to `c(100, 100, 100)`.
 
 ---
 # Numeric vectors and sequences
 
 You can perform arithmetic operations between two vectors element by element.
-```{r eval=FALSE}
+```{r elements, eval=FALSE}
 z / c(3, 2, 1)
 ```
 
@@ -174,7 +193,7 @@ z / c(3, 2, 1)
 
 And the same *reciclyng* principle happens with different length vectors:
 
-```{r eval=FALSE}
+```{r different_length, eval=FALSE}
 c(1,2,3,4) + 1:10
 ```
 
@@ -182,7 +201,7 @@ c(1,2,3,4) + 1:10
 
 What about more complex sequences?
 
-```{r eval=FALSE}
+```{r complex, eval=FALSE}
 pi:10
 ```
 
@@ -192,7 +211,7 @@ Again, you can get the documentation of `:` typing `?:` in the console.
 
 --
 
-Try to use `seq()` and `rep()` to do different vectors:
+*Use `seq()` and `rep()` to do different vectors*:
 
 - From 1 to 10 with length 30.
 - From 1 to 10 incremented by 0.5.
@@ -210,7 +229,7 @@ Try to use `seq()` and `rep()` to do different vectors:
 
 A logical vector can contain `TRUE`, `FALSE`, and `NA` (not available).
 
-Let's create a logical vector based on conditions on a numerical vector.
+*Create a logical vector based on conditions on a numerical vector*:
 
 ```{r eval=FALSE}
 c(0.5, 55, -10, 6) -> c
@@ -222,7 +241,7 @@ c < 1
 If we have two logical expressions A and B:
 
 - Use `&` and `|` in logical expressions involving the logical values TRUE and FALSE. 
-- User `!` to negate.
+- Use `!` to negate.
 
 ```{r eval=FALSE}
 (3 > 5) & (4 == 4)
@@ -244,7 +263,7 @@ paste(LETTERS, 1:4, sep = "-")
 
 ## Subseting
 
-Let's create a random vector `x` with the function `runif`, with length 10, and positive and negative numbers. We can get the first 5 elements:
+*Create a random vector `x` with the function `rnorm`, with length 10. Get the first 5 elements*:
 
 ```{r eval=FALSE}
 x[1:5]
@@ -252,7 +271,7 @@ x[1:5]
 
 --
 
-Get all elements different from `NA`, all the positives, the 3rd and 5th elements, and all elements except the 4th.
+*Get all elements different from `NA`, all the positives, the 3rd and 5th elements, and all elements except the 4th.*
 
 --
 
@@ -271,13 +290,13 @@ You can create named vectors and lists:
 vect <- c(foo = 11, bar = 2, norf = NA)
 ```
 
-You can print it to the console or only get its names with the function `names`.
+*Print it to the console or only get its names with the function `names`.*
 
-With a named vector you can try another way of subsetting: get the `bar` element.
+With a named vector you can try another way of subsetting: *get the `bar` element.*
 
 --
 
-A list can be nested and have a lot of levels. Create the `l` and `m` lists:
+A list can be nested and have a lot of levels. *Create the following `l` and `m` lists*:
 
 ```{r eval=FALSE}
 l <- list(thing="hat")
@@ -286,7 +305,7 @@ m <- list(el = "element", list = l)
 
 --
 
-If the variable lst contains a list, it can be indexed in two ways: `lst[[n]]` is the nth element of the list; whereas `lst[n]` is a list whose only element is the nth element of lst. 
+If the variable lst contains a list, it can be indexed in two ways: `l[[n]]` is the nth element of the list; whereas `l[n]` is a list whose only element is the nth element of lst. 
 
 ---
 # Functions
@@ -319,8 +338,8 @@ class: middle, inverse, center
 ---
 class: middle
 
-- An array is a multidimensional vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
-- Data frame has column names and row names. Data frame let you treat some features as factor.
+- An **array** is a **multidimensional** vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
+- A **data frame** has column names and row names. The data frame let you treat some features as factor.
 
 ---
 # Array and Matrix
@@ -348,13 +367,15 @@ arrest <- USArrests
 
 --
 
-Get some more information about this dataset with functions `class` and `dim`. If we are working with R we have to make sure we don't run out of RAM memory, so the `object.size` function is very handy.
+*Get more information about this dataset with functions `class` and `dim`.* 
+
+If we are working with R we have to make sure we don't run out of RAM memory, so the `object.size` function is very handy.
 
 There are more advanced techniques to work with more than RAM memory.
 
 --
 
-Display the first rows of data with `head` to take a look at the set. Finally to get a glimpse of the distribution you can use `summary`, and `str` to find out about structure of the columns.
+*Display the first rows of data with `head` to take a look at the set. Get a glimpse of the distribution you can use `summary`, and `str` to find out about structure of the columns.*
 
 ```{r eval=FALSE}
 summary(arrest)
@@ -380,7 +401,7 @@ There are two fundamental functions for packages:
 
 --
 
-We are going to install `rmarkdown` and `tidyverse` for the next chapters.
+We are going to install `rmarkdown`, `tidyverse`, and `caret` for the next chapters.
 
 --
 
