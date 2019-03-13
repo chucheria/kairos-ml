@@ -4,7 +4,7 @@
     <title>Tidyverse</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-10" />
+    <meta name="date" content="2019-03-13" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -14,9 +14,9 @@
 class: center, middle, inverse, title-slide
 
 # Tidyverse
-## Tidyverse VS. Base
+## Tidyverse for data
 ### Bea Hernández
-### 2019-03-10
+### 2019-03-13
 
 ---
 
@@ -49,19 +49,19 @@ The main packages of this bundle are:
 
 It has huge advantages:
 
-- Each package follows the same grammar
+- All packages follow the same grammar
 - It's easier to perform data management compared to base R
-- Readabily is improved
+- Readabily and reproducibility are improved
 
 --
 
-## But, isn't it slower?
+## But, isn't it slower than base R?
 
-Sometimes. Even so, base R is not the fastest way to do data science in R either. We can work with `data.table`, `h2o`, `Rcpp`, etc, to manage data and improve our speed in R. 
+*Sometimes*. Even so, base R is not the fastest way to do data science in R either. We can work with `data.table`, `h2o`, `Rcpp`, etc, to manage data and improve our speed in R. 
 
 Anyway, this will always depend on many variables, the bottom line is:
 
-**The data wrangling step of ML is way easier to do in the tidyverse**
+**The Exploratory Data Analysis is way easier to do in the tidyverse**
 
 If you need to optimize your workflow (speedwise) then you'll need to do some researching.
 
@@ -99,7 +99,7 @@ library(nycflights13)
 ---
 # Get basic information
 
-Use the `str` and `summary` on the flights dataset to answer the following questions:
+*Use the `str` and `summary` on the flights dataset to answer the following questions about the dataset*:
 
 1. What are the classes of the dataset?
 2. What is the class of the column *tailnum*?
@@ -133,7 +133,7 @@ filter(flights, dest == "IAH" | dest == "HOU")
 
 --
 
-- Were operated by United, American, or Delta. Hint: `%in%`
+- Were operated by United (*UA*), American (*AA*), or Delta (*DL*). Hint: `%in%`
 
 --
 
@@ -207,7 +207,7 @@ arrange(flights, distance)
 
 Use the function `select` to select the columns:
 
-- Brainstorm as many ways as possible to select dep_time, dep_delay, arr_time, and arr_delay from flights.
+- Brainstorm as many ways as possible to select *dep_time*, *dep_delay*, *arr_time*, and *arr_delay* from flights.
 
 --
 
@@ -349,6 +349,7 @@ ggplot(cancelled_delayed, aes(x = avg_dep_delay, prop_cancelled)) +
 &lt;img src="tidyverse_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
+# Plot the summary with ggplot2::ggplot
 
 
 ```r
