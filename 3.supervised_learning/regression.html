@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>What is R?</title>
+    <title>Supervised learning</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-13" />
+    <meta name="date" content="2019-03-14" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -13,411 +13,233 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# What is R?
-## Thinking with R
+# Supervised learning
+## Intro to ML
 ### Bea Hernández
-### 2019-03-13
+### 2019-03-14
 
 ---
 
 class: inverse, center, middle
 
-# What is R
+# Regression
 
 
 
 ---
-class: middle
+# What is regression?
 
-- R is **‘GNU S’** (free software under the GPL License)&lt;sup&gt;1&lt;/sup&gt;
-- R is **language and environment**
-- R is for **statistical computing** and **graphics**
-
-.footnote[
-[1] https://cran.r-project.org/
-]
+- The main motivation behind regression is to build an equation by which we can learn more about our data.
+- There is no hard-and-fast rule about which type of regression model to fit to your data, however. Choosing between a logistic regression, linear regression, or multivariate regression model depends on the problem and the data that you have.
 
 ---
 class: inverse, center, middle
 
-# Get Started
+# Linear Regression
 
 ---
-
-# Install R
-
-1. Download from [R-project](https://www.r-project.org/)
-2. Check your installation: in the terminal type `R`
-
-```bash
-$ R
-
-R version 3.5.0 (2018-04-23) -- "Joy in Playing"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.5.0 (64-bit)
-```
-
---
-
-You are recommended to use the [RStudio IDE](https://www.rstudio.com/products/rstudio/), but you do not have to. There are other IDEs:
-
-- [Emacs](https://ess.r-project.org/)
-- [PyCharm](https://plugins.jetbrains.com/plugin/6632-r-language-support)
-
---
-
-Or use the terminal:
-
---
-
-```bash
-$ Rscript my_script.R
-```
-
----
-class: center, middle, inverse
-
-# RStudio
-
----
-# RStudio
-
-&lt;img src="figs/rstudio.png" style="display: block; margin: auto;" /&gt;
-
----
-class: center, middle, inverse
-
-# Add-ins
-
----
-# add-in?
-
-## What is an add-in?
-
-- Written in R
-- Lives in an R package
-- Invoked by the user
-- Can be interactive or non-interactive
-
-## Examples
-
-- See live changes in Xaringan
-- Copy and paste data frames from external sources
-- Choose a ggplot theme on the fly
-
----
-class: center, middle, inverse
-
-# R basics
-
-Let's do some basic R in the console!
----
-
-# Basic math
+# An example model
 
 
 ```r
-5+7
+library(ggplot2)
+
+ggplot(mtcars, aes(mpg, disp)) +
+  geom_point() +
+  theme_minimal() +
+  labs(title = "Fuel Efficiency", 
+       subtitle = "Engine size (mpg) vs Fuel Efficiency (disp)") +
+   geom_smooth(method='lm', level = 0)
 ```
 
---
+![](regression_files/figure-html/plot_mtcars-1.png)&lt;!-- --&gt;
 
-Store the result in a variable. The assignment operator `&lt;-` is read as `gets` or in Spanish as `asignar`. To view de content of the variable just type the variable:
+---
+# An example model
 
 
 ```r
-x &lt;- 5 + 7
-x
+model &lt;- lm(mtcars$mpg ~ mtcars$disp)
+summary(model)
+```
+
+```
+## 
+## Call:
+## lm(formula = mtcars$mpg ~ mtcars$disp)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.8922 -2.2022 -0.9631  1.6272  7.2305 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 29.599855   1.229720  24.070  &lt; 2e-16 ***
+## mtcars$disp -0.041215   0.004712  -8.747 9.38e-10 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 3.251 on 30 degrees of freedom
+## Multiple R-squared:  0.7183,	Adjusted R-squared:  0.709 
+## F-statistic: 76.51 on 1 and 30 DF,  p-value: 9.38e-10
 ```
 
 ---
-# Numeric vectors
-
-The easiest way to create a vector is with the `c()` function (*concatenate* or *combine*)
-
---
-
+# An example model
 
 ```r
-c(1.1, 9, 3.14)
-z &lt;- c(1.1, 9, 3.14)
+lm(formula = mtcars$mpg ~ mtcars$disp)
 ```
 
---
-
-Do you have a question about any function? Just type `?function` in the console and the help will magically appear. Try it now:
-
+- Call: function call we used.
 
 ```r
-?c
+##     Min      1Q  Median      3Q     Max
+## -4.8922 -2.2022 -0.9631  1.6272  7.2305
 ```
 
---
-
-We can combine vectors with the same function:
-
+- Residuals: measure of vertical distance from each data point to the fitted line in our model.
 
 ```r
-c(1, z, 2)
+##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 29.599855   1.229720  24.070  &lt; 2e-16 ***
+## mtcars$disp -0.041215   0.004712  -8.747 9.38e-10 ***
 ```
 
---
-
-And perform arithmetic expressions on vectors. Common arithmetic operators are `+`, `-`, `/`, `^`, `%%`.
-
-
-```r
-z * 2 + 100
-```
-
-When you do this R is a vector of 2: `c(2, 2, 2)`, and another one of 100.
+- Coefficients: estimates for the coefficients of our linear equation. `y = 0.04x + 29.59`
+- Std. Error: those coefficients come error estimates as given by the Std. Error. `y = (−0.04±0.005)x+(29.59±1.23)`
+- t-value: measurement of the difference relative to the variation in our data.
+- p-value: statistical assessments of significance. The workings of p-values are more complicated than that, but for our purposes a p-value being of value less than 0.05 means that we can take the number as being statistically significant.
 
 ---
-# Numeric vectors and sequences
-
-You can perform arithmetic operations between two vectors element by element.
+# An example model
 
 ```r
-z / c(3, 2, 1)
+## Residual standard error: 3.251 on 30 degrees of freedom
 ```
 
---
-
-And the same *reciclyng* principle happens with different length vectors:
-
+- Residual standard error: error estimate pertains to the standard deviation of our data.
 
 ```r
-c(1,2,3,4) + 1:10
+## Multiple R-squared:  0.7183, Adjusted R-squared:  0.709
 ```
 
---
+- Multiple R-squared: R-squared value for when we have multiple predictors. Invariably our multiple R-squared will go up. This is because some feature we add to the model will explain some part of the variance, whether its true or not.
 
-What about more complex sequences?
-
+- Adjusted R-squared: R-squared tends to be a better representation of a model’s accuracy when there’s multiple features.
 
 ```r
-pi:10
+## F-statistic: 76.51 on 1 and 30 DF,  p-value: 9.38e-10
 ```
 
---
-
-Again, you can get the documentation of `:` typing `?:` in the console. 
-
---
-
-Try to use `seq()` and `rep()` to do different vectors:
-
-- From 1 to 10 with length 30.
-- From 1 to 10 incremented by 0.5.
-- Make a 0 vector of length 10.
+- F-statistic: ratio of the variance explained by parameters in the model and the unexplained variance.
 
 ---
-# Atomic vectors and lists
+class: inverse, center, middle
 
-- An **atomic vector** contains exactly one data type.
-- A **list** may contain multiple data types.
-
---
-
-## Logical vectors
-
-A logical vector can contain `TRUE`, `FALSE`, and `NA` (not available).
-
-Let's create a logical vector based on conditions on a numerical vector.
-
-
-```r
-c(0.5, 55, -10, 6) -&gt; c
-c &lt; 1
-```
-
---
-
-If we have two logical expressions A and B:
-
-- Use `&amp;` and `|` in logical expressions involving the logical values TRUE and FALSE. 
-- User `!` to negate.
-
-
-```r
-(3 &gt; 5) &amp; (4 == 4)
-```
+# Multivariate Regression
 
 ---
-# Atomic vectors
+# From linear to multivariate
 
-## Character vectors
+Suppose that you want to build a more robust model of fuel efficiency with more variables built into it. Fuel efficiency of a vehicle can be a complex phenomenon with many contributing factors other than engine size, so finding all of the features that are responsible for driving the behavior of the model in the most accurate fashion is where you want to utilize regression as you have been, but in a multivariate context.
 
-Character vectors work exactly the same as numeric vectors, and the `paste()` function treats every element as a character.
+`y = b + m1x1`
 
+*intercept, b, and the slope, m, tied to the one variable*
 
-```r
-LETTERS
-paste(LETTERS, 1:4, sep = "-")
-```
+`y = b + m1x1 + m2x2 + m3x3 + (...)`
 
---
-
-## Subseting
-
-Let's create a random vector `x` with the function `runif`, with length 10, and positive and negative numbers. We can get the first 5 elements:
-
-
-```r
-x[1:5]
-```
-
---
-
-Get all elements different from `NA`, all the positives, the 3rd and 5th elements, and all elements except the 4th.
-
---
-
-
-```r
-x[!is.na(x)]
-x[x &gt; 0]
-```
-
+*where x1, x2, x3, and so forth, are different features in the model, such as a vehicle’s weight, engine size, number of cylinders, and so on.*
 
 ---
-# Lists
-
-You can create named vectors and lists:
+# An example model
 
 
 ```r
-vect &lt;- c(foo = 11, bar = 2, norf = NA)
+summary(lm(mpg ~ disp + wt, data = mtcars))
 ```
 
-You can print it to the console or only get its names with the function `names`.
-
-With a named vector you can try another way of subsetting: get the `bar` element.
-
---
-
-A list can be nested and have a lot of levels. Create the `l` and `m` lists:
-
-
-```r
-l &lt;- list(thing="hat")
-m &lt;- list(el = "element", list = l)
+```
+## 
+## Call:
+## lm(formula = mpg ~ disp + wt, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.4087 -2.3243 -0.7683  1.7721  6.3484 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 34.96055    2.16454  16.151 4.91e-16 ***
+## disp        -0.01773    0.00919  -1.929  0.06362 .  
+## wt          -3.35082    1.16413  -2.878  0.00743 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.917 on 29 degrees of freedom
+## Multiple R-squared:  0.7809,	Adjusted R-squared:  0.7658 
+## F-statistic: 51.69 on 2 and 29 DF,  p-value: 2.744e-10
 ```
 
---
-
-If the variable lst contains a list, it can be indexed in two ways: `lst[[n]]` is the nth element of the list; whereas `lst[n]` is a list whose only element is the nth element of lst. 
+`disp` not statistically significant!
 
 ---
-# Functions
-
-Let's start with a simple one:
+# An example model
 
 
 ```r
-Sys.Date()
+summary(lm(mpg ~ wt + cyl, data = mtcars))
 ```
 
---
-
-You can also create a function:
-
-
-```r
-remainder &lt;- function(num, divisor = 2) {
-    num %% divisor
-}
+```
+## 
+## Call:
+## lm(formula = mpg ~ wt + cyl, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.2893 -1.5512 -0.4684  1.5743  6.1004 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  39.6863     1.7150  23.141  &lt; 2e-16 ***
+## wt           -3.1910     0.7569  -4.216 0.000222 ***
+## cyl          -1.5078     0.4147  -3.636 0.001064 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.568 on 29 degrees of freedom
+## Multiple R-squared:  0.8302,	Adjusted R-squared:  0.8185 
+## F-statistic: 70.91 on 2 and 29 DF,  p-value: 6.809e-12
 ```
 
---
-
-You want to see a function arguments? Use `args(remainder)` or the help!
+Substitute the `disp` for an statistically significant feature.
 
 ---
-class: middle, inverse, center
+# Take into account
 
-# Data Structures
+### Careful selection of features
+
+Pick features to add to the model one at a time and cut the ones that are statistically insignificant.
+
+### Regularization
+
+Keep all of the features but mathematically reduce the coefficients of the less important ones to minimize their impact on the model.
 
 ---
-class: middle
+# Regularization
 
-- An array is a multidimensional vector. Vectors and arrays are stored the same way internally, but an array may be displayed differently and accessed differently.
-- Data frame has column names and row names. Data frame let you treat some features as factor.
+Through the use of regularization, you can make your model more succinct and reduce the noise in the dataset that might be coming from features that have little impact on what you are trying to model against.
 
----
-# Array and Matrix
+Let’s see what the linear model for the mtcars dataset would look like if we included all the features. We would have an equation like this:
 
-
-```r
-a &lt;- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), nrow = 3, ncol = 4)
-a
+```
+mpg = 12.3 − 0.11cyl + 0.01disp − 0.02hp + 0.79drat − 3.72wt 
+      + 0.82qsec + 0.31vs + 2.42am + 0.66gear − 0.20carb
 ```
 
---
-
-
-```r
-w &lt;- array(c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18),dim=c(3,3,2))
-w[, , 1]
-```
-
----
-# Data Frames
-
-R has some datasets which you can access to learn. We are going to explore `USArrests`, first a variable will get this data frame, and then we will ask for some help on this data:
-
-
-```r
-arrest &lt;- USArrests
-```
-
---
-
-Get some more information about this dataset with functions `class` and `dim`. If we are working with R we have to make sure we don't run out of RAM memory, so the `object.size` function is very handy.
-
-There are more advanced techniques to work with more than RAM memory.
-
---
-
-Display the first rows of data with `head` to take a look at the set. Finally to get a glimpse of the distribution you can use `summary`, and `str` to find out about structure of the columns.
-
-
-```r
-summary(arrest)
-str(arrest)
-```
-
----
-class: middle, inverse, center
-
-# I want more
-
----
-
-# Packages and help
-
-## Packages
-
-There are two fundamental functions for packages:
-
-- `install.packages`: to install a package
-- `library`: to load a package
-- `::`: to load a function without loading the whole package
-
---
-
-We are going to install `rmarkdown` and `tidyverse` for the next chapters.
-
---
-
-## Halp!
-
-We have already see a way to have access to the function help. There are also other ways, like looking for a package documentation or a tutorial:
-
-- [CRAN Packages](https://cran.r-project.org/): packages documentation.
-- Vignettes: tutorial to start using a package.
-- Cheatsheets: all basic functions of a package.
-- `?`: inmediate access to function help.
+According to this linear equation, fuel efficiency is most sensitive to the weight of the vehicle (-3.72wt), given that this one has the largest coefficient. However, most of these are all within an order of magnitude or so to one another. Regularization would keep all of the features, but the less important ones would have their coefficients scaled down much further.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
