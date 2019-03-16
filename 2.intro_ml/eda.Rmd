@@ -68,6 +68,24 @@ dim(test)
 ```
 
 ---
+class: inverse, center, middle
+
+# Feature Engineering
+
+---
+
+# Feature engineering
+
+When presented data with very high dimensionality, models usually choke because:
+
+- **Training time** increases exponentially with number of features.
+- Models have increasing risk of **overfitting** with increasing number of features.
+
+**Feature Selection** methods helps with these problems by **reducing the dimensions** without much loss of the total information. It also helps to **make sense** of the features and its importance.
+
+The most important part of *feature ingeneering*: instead of feeding raw data to the model, you can **make it better** by modify the existing features and/or create new features. 
+
+---
 # Check for nulls
 
 ```{r nulls}
@@ -79,6 +97,106 @@ map_df(test, ~sum(is.na(.)))
 
 There's a lot of cabin information missing. If we take a look at the [data information](https://www.kaggle.com/c/titanic/data) and [looking](https://www.kaggle.com/c/titanic/discussion/4693) for the exact meaning on the *cabin* values, the first class had the top decks, it makes sense that the people towards the top were closer to the lifeboats, ergo more likely to survive. So we will keep it as predictor for now even if there's a lot of data missing.
 
+---
+# Filling missing data
+
+So, now we know how to do correlation between two variables we can do something else from the prior list. 
+
+--
+
+Filling the missing data is one of the most *personal* tasks of the EDA. We are making up data so our observation is complete and not descarted in the model or that our new complete data is giving different information. 
+
+--
+
+```{r nas, message=F}
+map_df(train, ~sum(is.na(.)))
+```
+
+--
+
+We are going to fill *Age* and *Embarked* with median value, so it doesn't aggregate too much weight. The problem is *Cabin*, we said before the Cabin would determine how closer were you to the surface, but the truth is that *Pclass* gives us a similar information, being 1st class the closer to the surface.
+
+---
+
+```{r replace, message=F}
+library(magrittr)
+train %<>% 
+  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
+          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %>%
+  select(-Cabin)
+
+head(train)
+
+test %<>% 
+  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
+          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %>%
+  select(-Cabin)
+```
+
+---
+# Reshape the dataset
+
+```{r reshape}
+train %<>% 
+  mutate('FamilySize' = SibSp + Parch,
+         'Title' = stringr::str_extract(string = Name, '\\w+\\.'))
+
+test %<>% 
+  mutate('FamilySize' = SibSp + Parch,
+         'Title' = stringr::str_extract(string = Name, '\\w+\\.'))
+```
+
+--
+
+```{r see_familysize, fig.height=3, fig.width=11}
+ggplot(train, aes(FamilySize, fill = as.factor(Survived))) +
+  geom_bar() +
+  theme_minimal()
+```
+
+---
+# Reshape the dataset
+
+```{r see_title, fig.height=3, fig.width=11}
+ggplot(train, aes(Title, fill = as.factor(Survived))) +
+  geom_bar() +
+  theme_minimal()
+```
+
+```{r titles_data}
+title_dict = list("Mr." = "Mr.", "Miss." = "Miss", "Mrs." = "Mrs", 
+                  "Master." = "Master", "Dr." = "Scholar", "Rev." = "Religious", 
+                  "Col." = "Officer", "Major." = "Officer", "Mlle." = "Miss", 
+                  "Don." = "Noble", "Countess." = "Noble", "Ms." = "Mrs", 
+                  "Mme." = "Mrs", "Capt." = "Noble", "Lady." = "Noble", 
+                  "Sir." = "Noble", "Jonkheer." = "Noble", "Dona." = "Noble")
+train %<>% 
+  mutate('TitleGroup' = unlist(title_dict[Title]))
+```
+
+---
+# Reshape the dataset
+```{r, fig.height=5, fig.width=11}
+test %<>% 
+  mutate('TitleGroup' = unlist(title_dict[Title]))
+
+ggplot(train, aes(TitleGroup, fill = as.factor(Survived))) +
+  geom_bar() +
+  theme_minimal()
+```
+
+---
+class: inverse, center, middle
+
+# Encode your dataset
+---
+```{r encode}
+train_encode <- train %>%
+  mutate(Sex = if_else(Sex == "male", 0, 1),
+         Embarked = case_when(Embarked == 'C' ~ 0,
+                              Embarked == 'Q' ~ 1,
+                              Embarked == 'S' ~ 2))
+```
 ---
 # Check for correlation between variables
 
@@ -133,68 +251,45 @@ chisq.test(as.factor(train$Pclass), as.factor(train$Survived))
 
 --
 
-The *p-value* is almost 0, this means that the probability that both variables are independent is almost 0, so they are highly correlated. Is this too subtle? Well... yeah. Not all correlation is easy to prove. But to have a visual look at the correlation we can plot and see.
+The *p-value* is almost 0, this means that the probability that both variables are independent is almost 0, so they are highly correlated. Is this too subtle? Well... yeah. Not all correlation is easy to prove. 
 
 ---
 # Correlation
 
-```{r survived, fig.height=6, fig.align='center'}
-ggplot(train, aes(Pclass)) +
-  geom_bar(aes(fill = as.factor(Survived)))
+With our encode data we have more numerical variables, it is easier to see the correlation with a correlation `heatmap`:
+
+```{r echo=F}
+cormat <- round(cor(train_encode %>% select(Survived, Pclass, Sex, Age, Fare, 
+                                            Embarked, FamilySize)),2)
+ggplot(data = reshape2::melt(cormat), aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile() +
+  geom_text(aes(label = value), color = "white") +
+  theme_minimal()
 ```
 
 ---
 class: inverse, center, middle
-
-# Exploratory data analysis 
-
----
-# Filling missing data
-
-So, now we know how to do correlation between two variables we can do something else from the prior list. 
-
---
-
-Filling the missing data is one of the most *personal* tasks of the EDA. We are making up data so our observation is complete and not descarted in the model or that our new complete data is giving different information. 
-
---
-
-```{r nas, message=F}
-map_df(train, ~sum(is.na(.)))
-```
-
---
-
-We are going to fill *Age* and *Embarked* with median value, so it doesn't aggregate too much weight. The problem is *Cabin*, we said before the Cabin would determine how closer were you to the surface, but the truth is that *Pclass* gives us a similar information, being 1st class the closer to the surface.
-
----
-
-```{r replace, message=F}
-library(magrittr)
-train %<>% 
-  mutate(Age = ifelse(is.na(Age), median(Age, na.rm = TRUE), Age), 
-          Embarked = ifelse(is.na(Embarked), median(Embarked, na.rm = TRUE), Embarked)) %>%
-  select(-Cabin)
-
-head(train)
-```
-
----
-class: inverse, center, middle
-
-# Feature Selection
-
----
 
 # Feature selection
 
-When presented data with very high dimensionality, models usually choke because:
+---
+# Feature selection
 
-- **Training time** increases exponentially with number of features.
-- Models have increasing risk of **overfitting** with increasing number of features.
+Taking a look at the correlation matrix I can make some decision about the variables I want to keep for my model.
 
-**Feature Selection** methods helps with these problems by **reducing the dimensions** without much loss of the total information. It also helps to **make sense** of the features and its importance.
+```{r drop}
+train %<>% 
+  select(-c(Embarked, Age))
 
+test %<>% 
+  select(-c(Embarked, Age))
 
+str(train)
+```
+
+---
+# One-hot or dummy variables
+
+The last step to be able to build my model is to do some more encoding. Machine learning algorithms cannot process text and categorical variables, unless they have build-in function for it. So we have to convert categorical variables into numerical variables. But encoding them to ordinal values could make algorithm bias on how large the numbers are.
 
 
