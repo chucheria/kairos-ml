@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
-    <title>Supervised learning</title>
+    <title>Regression</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-14" />
+    <meta name="date" content="2019-03-19" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -13,24 +13,31 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# Supervised learning
-## Intro to ML
+# Regression
+## Supervised learning
 ### Bea Hernández
-### 2019-03-14
+### 2019-03-19
 
 ---
 
 class: inverse, center, middle
 
-# Regression
+# What is regression?
 
 
 
 ---
 # What is regression?
 
-- The main motivation behind regression is to build an equation by which we can learn more about our data.
-- There is no hard-and-fast rule about which type of regression model to fit to your data, however. Choosing between a logistic regression, linear regression, or multivariate regression model depends on the problem and the data that you have.
+- The main motivation behind regression is to build an **equation** by which we can learn more about our data.
+- There is no hard-and-fast rule about which type of regression model to fit to your data, however. 
+- Investigates the relationship between a **dependent** (target) and **independent** variables (predictor).
+- Types of regression:
+  - Linear Regression: relationship between dependent variable and one or more independent variables using a best fit straight line
+  - Polynomial Regression: the power of independent variable is more than 1
+  - Lasso Regression: Least Absolute Shrinkage and Selection Operator penalizes the absolute size of the regression coefficients
+  - Logistic Regression: find the probability of the event being a success or not.
+  - Other variations like: Stepwise Regression, Ridge Regression, and ElasticNet Regression
 
 ---
 class: inverse, center, middle
@@ -38,7 +45,7 @@ class: inverse, center, middle
 # Linear Regression
 
 ---
-# An example model
+# Fuel efficiency with Linear Regression
 
 
 ```r
@@ -52,21 +59,21 @@ ggplot(mtcars, aes(mpg, disp)) +
    geom_smooth(method='lm', level = 0)
 ```
 
-![](regression_files/figure-html/plot_mtcars-1.png)&lt;!-- --&gt;
+&lt;img src="regression_files/figure-html/plot_mtcars-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
-# An example model
+# Fuel efficiency with Linear Regression
 
 
 ```r
-model &lt;- lm(mtcars$mpg ~ mtcars$disp)
+model &lt;- lm(mpg ~ disp, data = mtcars)
 summary(model)
 ```
 
 ```
 ## 
 ## Call:
-## lm(formula = mtcars$mpg ~ mtcars$disp)
+## lm(formula = mpg ~ disp, data = mtcars)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
@@ -75,7 +82,7 @@ summary(model)
 ## Coefficients:
 ##              Estimate Std. Error t value Pr(&gt;|t|)    
 ## (Intercept) 29.599855   1.229720  24.070  &lt; 2e-16 ***
-## mtcars$disp -0.041215   0.004712  -8.747 9.38e-10 ***
+## disp        -0.041215   0.004712  -8.747 9.38e-10 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
@@ -85,13 +92,7 @@ summary(model)
 ```
 
 ---
-# An example model
-
-```r
-lm(formula = mtcars$mpg ~ mtcars$disp)
-```
-
-- Call: function call we used.
+# Fuel efficiency with Linear Regression
 
 ```r
 ##     Min      1Q  Median      3Q     Max
@@ -99,6 +100,8 @@ lm(formula = mtcars$mpg ~ mtcars$disp)
 ```
 
 - Residuals: measure of vertical distance from each data point to the fitted line in our model.
+
+--
 
 ```r
 ##              Estimate Std. Error t value Pr(&gt;|t|)
@@ -112,13 +115,15 @@ lm(formula = mtcars$mpg ~ mtcars$disp)
 - p-value: statistical assessments of significance. The workings of p-values are more complicated than that, but for our purposes a p-value being of value less than 0.05 means that we can take the number as being statistically significant.
 
 ---
-# An example model
+# Fuel efficiency with Linear Regression
 
 ```r
 ## Residual standard error: 3.251 on 30 degrees of freedom
 ```
 
 - Residual standard error: error estimate pertains to the standard deviation of our data.
+
+--
 
 ```r
 ## Multiple R-squared:  0.7183, Adjusted R-squared:  0.709
@@ -127,6 +132,8 @@ lm(formula = mtcars$mpg ~ mtcars$disp)
 - Multiple R-squared: R-squared value for when we have multiple predictors. Invariably our multiple R-squared will go up. This is because some feature we add to the model will explain some part of the variance, whether its true or not.
 
 - Adjusted R-squared: R-squared tends to be a better representation of a model’s accuracy when there’s multiple features.
+
+--
 
 ```r
 ## F-statistic: 76.51 on 1 and 30 DF,  p-value: 9.38e-10
@@ -142,7 +149,7 @@ class: inverse, center, middle
 ---
 # From linear to multivariate
 
-Suppose that you want to build a more robust model of fuel efficiency with more variables built into it. Fuel efficiency of a vehicle can be a complex phenomenon with many contributing factors other than engine size, so finding all of the features that are responsible for driving the behavior of the model in the most accurate fashion is where you want to utilize regression as you have been, but in a multivariate context.
+Suppose that you want to build a more robust model of fuel efficiency with **more variables** built into it. Fuel efficiency of a vehicle can be a complex phenomenon with many contributing factors other than engine size, so finding all of the features that are responsible for driving the behavior of the model in the most accurate fashion is where you want to utilize regression as you have been, but in a multivariate context.
 
 `y = b + m1x1`
 
@@ -153,7 +160,7 @@ Suppose that you want to build a more robust model of fuel efficiency with more 
 *where x1, x2, x3, and so forth, are different features in the model, such as a vehicle’s weight, engine size, number of cylinders, and so on.*
 
 ---
-# An example model
+# Fuel efficiency - Multivariate Regression
 
 
 ```r
@@ -185,7 +192,7 @@ summary(lm(mpg ~ disp + wt, data = mtcars))
 `disp` not statistically significant!
 
 ---
-# An example model
+# Fuel efficiency - Multivariate Regression
 
 
 ```r
@@ -219,27 +226,188 @@ Substitute the `disp` for an statistically significant feature.
 ---
 # Take into account
 
-### Careful selection of features
+### Feature engineering
 
-Pick features to add to the model one at a time and cut the ones that are statistically insignificant.
+**Pick features** to add to the model one at a time and cut the ones that are statistically insignificant.
 
 ### Regularization
 
-Keep all of the features but mathematically reduce the coefficients of the less important ones to minimize their impact on the model.
+Keep all of the features but mathematically **reduce the coefficients** of the less important ones to minimize their impact on the model.
 
 ---
-# Regularization
+class: inverse, center, middle
 
-Through the use of regularization, you can make your model more succinct and reduce the noise in the dataset that might be coming from features that have little impact on what you are trying to model against.
+# Lasso regression
 
-Let’s see what the linear model for the mtcars dataset would look like if we included all the features. We would have an equation like this:
+---
+# Regularization with lasso
+
+Let’s see what the linear model for the `mtcars` dataset would look like if we included all the features. We would have an equation like this:
 
 ```
-mpg = 12.3 − 0.11cyl + 0.01disp − 0.02hp + 0.79drat − 3.72wt 
-      + 0.82qsec + 0.31vs + 2.42am + 0.66gear − 0.20carb
+mpg = 12.3 − 0.11cyl + 0.01disp − 0.02hp + 0.79drat − 3.72wt + 0.82qsec + 0.31vs 
+      + 2.42am + 0.66gear − 0.20carb
 ```
 
-According to this linear equation, fuel efficiency is most sensitive to the weight of the vehicle (-3.72wt), given that this one has the largest coefficient. However, most of these are all within an order of magnitude or so to one another. Regularization would keep all of the features, but the less important ones would have their coefficients scaled down much further.
+According to this linear equation, fuel efficiency is most sensitive to the weight of the vehicle (`-3.72wt`), given that this one has the largest coefficient. However, most of these are all within an order of magnitude or so to one another. Regularization would keep all of the features, but the less important ones would have their coefficients scaled down much further.
+
+---
+# Regularization with lasso
+
+
+```r
+library(dplyr)
+library(glmnet)
+y &lt;- mtcars %&gt;% select(mpg) %&gt;% scale(center = TRUE, scale = FALSE) %&gt;% as.matrix()
+X &lt;- mtcars %&gt;% select(-mpg) %&gt;% as.matrix()
+
+lasso_cv &lt;- cv.glmnet(X, y, alpha = 1, standardize = TRUE)
+coef(lasso_cv)
+```
+
+```
+## 11 x 1 sparse Matrix of class "dgCMatrix"
+##                        1
+## (Intercept) 13.380766879
+## cyl         -0.833427049
+## disp         .          
+## hp          -0.005886408
+## drat         .          
+## wt          -2.287815523
+## qsec         .          
+## vs           .          
+## am           .          
+## gear         .          
+## carb         .
+```
+
+---
+class: inverse, center, middle
+
+# Polynomial regression
+
+---
+# US Population - Polynomial regression
+
+Polynomial regression is simply fitting a **higher degree** function to the data.
+
+
+```r
+population &lt;- data.frame(uspop) %&gt;%
+  mutate(us_pop = as.numeric(uspop),
+         year = seq(from = 1790, to = 1970, by = 10))
+
+ggplot(population, aes(x = year, y = us_pop)) +
+  geom_point() +
+  geom_smooth(method = 'lm', level = 0)
+```
+
+&lt;img src="regression_files/figure-html/polynomial-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# US Population - Polynomial regression
+
+
+```r
+lm1 &lt;- lm(us_pop ~ poly(year, 1), data = population)
+summary(lm1)
+```
+
+```
+## 
+## Call:
+## lm(formula = us_pop ~ poly(year, 1), data = population)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -19.569 -14.776  -2.933   9.501  36.345 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     69.769      4.158   16.78 5.16e-12 ***
+## poly(year, 1)  257.542     18.125   14.21 7.29e-11 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 18.12 on 17 degrees of freedom
+## Multiple R-squared:  0.9223,	Adjusted R-squared:  0.9178 
+## F-statistic: 201.9 on 1 and 17 DF,  p-value: 7.286e-11
+```
+
+---
+# US Population - Polynomial regression
+
+
+```r
+lm2 &lt;- lm(us_pop ~ poly(year, 2), data = population)
+summary(lm2)
+```
+
+```
+## 
+## Call:
+## lm(formula = us_pop ~ poly(year, 2), data = population)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -6.5997 -0.7105  0.2669  1.4065  3.9879 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     69.7695     0.6377  109.40  &lt; 2e-16 ***
+## poly(year, 2)1 257.5420     2.7798   92.65  &lt; 2e-16 ***
+## poly(year, 2)2  73.8974     2.7798   26.58 1.14e-14 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.78 on 16 degrees of freedom
+## Multiple R-squared:  0.9983,	Adjusted R-squared:  0.9981 
+## F-statistic:  4645 on 2 and 16 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+# US Population - Polynomial regression
+
+
+```r
+ggplot(population, aes(x = year, y = us_pop)) +
+  geom_point() +
+  geom_smooth(method = 'lm', level = 0, formula=y ~ poly(x, 2, raw=TRUE))
+```
+
+&lt;img src="regression_files/figure-html/lm2_plot-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# US Population - Polynomial regression
+
+
+```r
+uspop.2020 &lt;- data.frame(year = c(1980, 1990, 2000, 2010), 
+                         us_pop = c(226.5,249.6, 282.2, 309.3))
+
+lm1_p &lt;- predict(lm1, uspop.2020)
+lm2_p &lt;- predict(lm2, uspop.2020)
+
+caret::postResample(lm1_p, uspop.2020$us_pop)
+```
+
+```
+##       RMSE   Rsquared        MAE 
+## 75.6224454  0.9961522 73.0772018
+```
+
+```r
+caret::postResample(lm2_p, uspop.2020$us_pop)
+```
+
+```
+##      RMSE  Rsquared       MAE 
+## 8.1923114 0.9970722 7.4107013
+```
+
+&lt;img src="regression_files/figure-html/residuals-1.png" style="display: block; margin: auto;" /&gt;
+
+---
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
