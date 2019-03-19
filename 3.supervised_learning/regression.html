@@ -408,6 +408,120 @@ caret::postResample(lm2_p, uspop.2020$us_pop)
 &lt;img src="regression_files/figure-html/residuals-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
+class: inverse, center, middle
+
+# Logistic regression
+
+---
+# Stock prediction with logistic regression
+
+
+```r
+library(ISLR)
+
+head(Smarket, n = 1)
+```
+
+```
+##   Year  Lag1   Lag2   Lag3   Lag4 Lag5 Volume Today Direction
+## 1 2001 0.381 -0.192 -2.624 -1.055 5.01 1.1913 0.959        Up
+```
+
+```r
+summary(Smarket)
+```
+
+```
+##       Year           Lag1                Lag2          
+##  Min.   :2001   Min.   :-4.922000   Min.   :-4.922000  
+##  1st Qu.:2002   1st Qu.:-0.639500   1st Qu.:-0.639500  
+##  Median :2003   Median : 0.039000   Median : 0.039000  
+##  Mean   :2003   Mean   : 0.003834   Mean   : 0.003919  
+##  3rd Qu.:2004   3rd Qu.: 0.596750   3rd Qu.: 0.596750  
+##  Max.   :2005   Max.   : 5.733000   Max.   : 5.733000  
+##       Lag3                Lag4                Lag5         
+##  Min.   :-4.922000   Min.   :-4.922000   Min.   :-4.92200  
+##  1st Qu.:-0.640000   1st Qu.:-0.640000   1st Qu.:-0.64000  
+##  Median : 0.038500   Median : 0.038500   Median : 0.03850  
+##  Mean   : 0.001716   Mean   : 0.001636   Mean   : 0.00561  
+##  3rd Qu.: 0.596750   3rd Qu.: 0.596750   3rd Qu.: 0.59700  
+##  Max.   : 5.733000   Max.   : 5.733000   Max.   : 5.73300  
+##      Volume           Today           Direction 
+##  Min.   :0.3561   Min.   :-4.922000   Down:602  
+##  1st Qu.:1.2574   1st Qu.:-0.639500   Up  :648  
+##  Median :1.4229   Median : 0.038500             
+##  Mean   :1.4783   Mean   : 0.003138             
+##  3rd Qu.:1.6417   3rd Qu.: 0.596750             
+##  Max.   :3.1525   Max.   : 5.733000
+```
+
+---
+# Stock prediction with logistic regression
+
+
+```r
+ggplot(stack(Smarket %&gt;% select(-Year)), aes(x = ind, y = values)) +
+  geom_boxplot() +
+  theme_minimal()
+```
+
+&lt;img src="regression_files/figure-html/boxplot_logistic-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Stock prediction with logistic regression
+
+
+```r
+library(corrplot)
+correlations &lt;- cor(Smarket %&gt;%
+                      mutate(direction_up = ifelse(Direction == 'Up', 1, 0)) %&gt;%
+                      select(-Direction))
+corrplot(correlations, method="shade")
+```
+
+&lt;img src="regression_files/figure-html/correlations-1.png" style="display: block; margin: auto;" /&gt;
+Volume and year are highly correlated, as well as Today and our target variable.
+
+---
+# Stock prediction with logistic regression
+
+
+```r
+train &lt;- Smarket %&gt;% filter(Year &lt; 2005)
+test &lt;- Smarket %&gt;% filter(Year &gt;= 2005)
+
+library(caret)
+```
+
+```
+## Loading required package: lattice
+```
+
+```r
+glm.fit &lt;- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume + Today, 
+               data = train, family = binomial)
+coef(glm.fit)
+```
+
+```
+##  (Intercept)         Lag1         Lag2         Lag3         Lag4 
+## -101.2261049   -4.0007986   13.3194066   -0.7816574    4.0827435 
+##         Lag5       Volume        Today 
+##   12.7554422   84.4569698 2794.2451377
+```
+
+```r
+glm.probs &lt;- predict(glm.fit, newdata = test, type = "response")
+glm.pred &lt;- ifelse(glm.probs &gt; 0.5, "Up", "Down")
+table(glm.pred, test$Direction)
+```
+
+```
+##         
+## glm.pred Down  Up
+##     Down  110   0
+##     Up      1 141
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

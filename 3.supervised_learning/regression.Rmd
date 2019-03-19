@@ -255,3 +255,54 @@ plot(resid(lm2), main = "Degree 2", xlab = "", ylab = "Fit Residual")
 ```
 
 ---
+class: inverse, center, middle
+
+# Logistic regression
+
+---
+# Stock prediction with logistic regression
+
+```{r logistic_data, message=F}
+library(ISLR)
+
+head(Smarket, n = 1)
+summary(Smarket)
+```
+
+---
+# Stock prediction with logistic regression
+
+```{r boxplot_logistic, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
+ggplot(stack(Smarket %>% select(-Year)), aes(x = ind, y = values)) +
+  geom_boxplot() +
+  theme_minimal()
+```
+
+---
+# Stock prediction with logistic regression
+
+```{r correlations, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
+library(corrplot)
+correlations <- cor(Smarket %>%
+                      mutate(direction_up = ifelse(Direction == 'Up', 1, 0)) %>%
+                      select(-Direction))
+corrplot(correlations, method="shade")
+```
+Volume and year are highly correlated, as well as Today and our target variable.
+
+---
+# Stock prediction with logistic regression
+
+```{r model_logistic, warning=F}
+train <- Smarket %>% filter(Year < 2005)
+test <- Smarket %>% filter(Year >= 2005)
+
+library(caret)
+glm.fit <- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume + Today, 
+               data = train, family = binomial)
+coef(glm.fit)
+
+glm.probs <- predict(glm.fit, newdata = test, type = "response")
+glm.pred <- ifelse(glm.probs > 0.5, "Up", "Down")
+table(glm.pred, test$Direction)
+```
