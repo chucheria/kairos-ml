@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Naive Bayes</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bea Hernández" />
+    <meta name="date" content="2019-03-19" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Naive Bayes
+## Supervised learning
+### Bea Hernández
+### 2019-03-19
+
+---
+
+class: inverse, center, middle
+
+# Naive Bayes
+
+
+
+---
+# Naive Bayes Classification
+
+One way to do classification with probabilities is through the use of Bayesian statistics. Although this field can have a rather steep learning curve, essentially we are trying to answer the question, “Based on the features we have, what is the probability that the outcome is class X?” A naive Bayes classifier answers this question with a rather bold assumption: all of the predictors we have are independent of one another.
+
+---
+class: inverse, center, middle
+
+# Bayesian Statistics
+
+---
+# Bayesian Statistics in a Nutshell
+
+Suppose that I ride my bike in 100 races and I win 54 of them. The probability of me winning a race, therefore, is just the number of times I’ve won divided by the total number of occurrences:
+`P(win) = 54 / 100 = 54 %`
+
+--
+
+Suppose that I want to learn the probability of me winning a bike race and the probability of a wind storm occurring on Mars. These two things are completely independent of each other, given that there being a wind storm on Mars could not possibly affect the result of my bike race, and vice versa. Let’s assume that the probability of a wind storm on Mars is 20%. To calculate the probability of both of these independent things happening, we just multiply them:
+`P(win and Mars) = P(win) × P(Mars) = 54% × 20% = 10.8%`
+
+--
+
+Consider a deck of cards. The probability of me picking any queen is 4/52. The probability of me picking any ace after picking out a queen, however, is dependent, because we just removed a card from the deck; thus, probability would now be 4/51. The probability would be defined like this:
+`P(Queen and Ace) = P(Queen) × P(Ace | Queen) = (4/52) × (4/51) = 0.6%`
+
+--
+
+`P(A and B) = P(A)*P(B|A)`
+`P(B)*P(A|B) / P(A)=P(B|A)`
+
+---
+
+
+```r
+library(e1071)
+library(tidyverse)
+titanic &lt;- as_tibble(Titanic)
+```
+--
+
+
+```r
+reps &lt;- rep.int(seq_len(nrow(titanic)), titanic$n)
+titanic_df &lt;- titanic[reps,] %&gt;% select(-n)
+index &lt;- caret::createDataPartition(titanic_df$Survived, p = 0.2, list = F)
+train &lt;- titanic_df[index, ]
+test &lt;- titanic_df[-index, ]
+```
+
+--
+
+
+```r
+nb &lt;- naiveBayes(as.factor(Survived) ~., data = train)
+nb
+```
+
+```
+## 
+## Naive Bayes Classifier for Discrete Predictors
+## 
+## Call:
+## naiveBayes.default(x = X, y = Y, laplace = laplace)
+## 
+## A-priori probabilities:
+## Y
+##       No      Yes 
+## 0.675737 0.324263 
+## 
+## Conditional probabilities:
+##      Class
+## Y            1st        2nd        3rd       Crew
+##   No  0.09395973 0.11073826 0.36577181 0.42953020
+##   Yes 0.35664336 0.16083916 0.21678322 0.26573427
+## 
+##      Sex
+## Y         Female       Male
+##   No  0.08389262 0.91610738
+##   Yes 0.46853147 0.53146853
+## 
+##      Age
+## Y          Adult      Child
+##   No  0.97315436 0.02684564
+##   Yes 0.91608392 0.08391608
+```
+
+
+```r
+nb_p &lt;- predict(nb, newdata = test %&gt;% select(-Survived))
+caret::confusionMatrix(as.factor(nb_p), as.factor(test$Survived))
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   No  Yes
+##        No  1091  281
+##        Yes  101  287
+##                                          
+##                Accuracy : 0.783          
+##                  95% CI : (0.7629, 0.802)
+##     No Information Rate : 0.6773         
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+##                                          
+##                   Kappa : 0.4586         
+##  Mcnemar's Test P-Value : &lt; 2.2e-16      
+##                                          
+##             Sensitivity : 0.9153         
+##             Specificity : 0.5053         
+##          Pos Pred Value : 0.7952         
+##          Neg Pred Value : 0.7397         
+##              Prevalence : 0.6773         
+##          Detection Rate : 0.6199         
+##    Detection Prevalence : 0.7795         
+##       Balanced Accuracy : 0.7103         
+##                                          
+##        'Positive' Class : No             
+## 
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

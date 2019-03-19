@@ -1,0 +1,82 @@
+---
+title: "Naive Bayes"
+subtitle: "Supervised learning"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# Naive Bayes
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
+       fig.retina = 3)
+```
+
+---
+# Naive Bayes Classification
+
+One way to do classification with probabilities is through the use of Bayesian statistics. Although this field can have a rather steep learning curve, essentially we are trying to answer the question, “Based on the features we have, what is the probability that the outcome is class X?” A naive Bayes classifier answers this question with a rather bold assumption: all of the predictors we have are independent of one another.
+
+---
+class: inverse, center, middle
+
+# Bayesian Statistics
+
+---
+# Bayesian Statistics in a Nutshell
+
+Suppose that I ride my bike in 100 races and I win 54 of them. The probability of me winning a race, therefore, is just the number of times I’ve won divided by the total number of occurrences:
+`P(win) = 54 / 100 = 54 %`
+
+--
+
+Suppose that I want to learn the probability of me winning a bike race and the probability of a wind storm occurring on Mars. These two things are completely independent of each other, given that there being a wind storm on Mars could not possibly affect the result of my bike race, and vice versa. Let’s assume that the probability of a wind storm on Mars is 20%. To calculate the probability of both of these independent things happening, we just multiply them:
+`P(win and Mars) = P(win) × P(Mars) = 54% × 20% = 10.8%`
+
+--
+
+Consider a deck of cards. The probability of me picking any queen is 4/52. The probability of me picking any ace after picking out a queen, however, is dependent, because we just removed a card from the deck; thus, probability would now be 4/51. The probability would be defined like this:
+`P(Queen and Ace) = P(Queen) × P(Ace | Queen) = (4/52) × (4/51) = 0.6%`
+
+--
+
+`P(A and B) = P(A)*P(B|A)`
+`P(B)*P(A|B) / P(A)=P(B|A)`
+
+---
+
+```{r data_titanic, message=F}
+library(e1071)
+library(tidyverse)
+titanic <- as_tibble(Titanic)
+```
+--
+
+```{r data_ungrouped, message=F}
+reps <- rep.int(seq_len(nrow(titanic)), titanic$n)
+titanic_df <- titanic[reps,] %>% select(-n)
+index <- caret::createDataPartition(titanic_df$Survived, p = 0.2, list = F)
+train <- titanic_df[index, ]
+test <- titanic_df[-index, ]
+```
+
+--
+
+```{r naive}
+nb <- naiveBayes(as.factor(Survived) ~., data = train)
+nb
+```
+
+```{r pred}
+nb_p <- predict(nb, newdata = test %>% select(-Survived))
+caret::confusionMatrix(as.factor(nb_p), as.factor(test$Survived))
+```
