@@ -1,0 +1,76 @@
+---
+title: "Support Vector Machines"
+subtitle: "Supervised learning"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# Support Vector Machines
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
+       fig.retina = 3)
+```
+
+---
+# Support Vector Machines
+
+Support vector machines, known better as SVMs, are a machine learning model that use hyperplanes to separate data. To separate and partition our data, we find some kind of plane (or in the cases of two-dimensional data, a line) that separates them and use the vectors that maximize the separation in the data.
+
+```{r, fig.align='center', echo=F, out.width = "50%"}
+knitr::include_graphics('figs/smv.png')
+```
+
+---
+# Support Vector Machines
+
+SVMs work by employing something called the *kernel trick*: This is a method by which we can **transform** the data for which we are trying to draw a decision boundary, and then **apply a hyperplane** separation on that transformed data. In its simplest form, the kernel trick means transforming data into another dimension that has a clear dividing margin between classes of data.
+
+In practice, this transformation is more or less a **black box** because the feature space can be quite complex, but the idea is still the same.
+
+```{r, fig.align='center', echo=F, out.width = "60%"}
+knitr::include_graphics('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kernel_trick_idea.svg/1000px-Kernel_trick_idea.svg.png')
+```
+
+---
+# Iris - Support Vector Machines
+
+```{r data_iris, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
+library(e1071)
+
+iris_2dimension <- iris[, c("Petal.Length", "Petal.Width", "Species")]
+index <- caret::createDataPartition(iris_2dimension$Species, p = 0.3, list = F)
+train <- iris_2dimension[index, ]
+test <- iris_2dimension[-index, ]
+
+svmfit <- e1071::svm(Species ~ ., data = train, kernel = "linear", scale = T)
+
+plot(svmfit, train)
+```
+---
+
+```{r data_ungrouped, message=F}
+tuned <- tune(svm, Species ~ ., data = train, kernel = "linear",
+              ranges = list(cost = 10^(-3:3)))
+
+summary(tuned)
+```
+
+---
+# Iris - Support Vector Machines
+
+```{r, message=F, warning = F, fig.align='center', fig.height=5, fig.width=11} 
+svmfit <- svm(Species ~ ., data = train, kernel = "linear",
+              cost = 0.1, scale = T)
+
+plot(svmfit, train)
+```

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Support Vector Machines</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bea Hernández" />
+    <meta name="date" content="2019-03-20" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Support Vector Machines
+## Supervised learning
+### Bea Hernández
+### 2019-03-20
+
+---
+
+class: inverse, center, middle
+
+# Support Vector Machines
+
+
+
+---
+# Support Vector Machines
+
+Support vector machines, known better as SVMs, are a machine learning model that use hyperplanes to separate data. To separate and partition our data, we find some kind of plane (or in the cases of two-dimensional data, a line) that separates them and use the vectors that maximize the separation in the data.
+
+&lt;img src="figs/smv.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+# Support Vector Machines
+
+SVMs work by employing something called the *kernel trick*: This is a method by which we can **transform** the data for which we are trying to draw a decision boundary, and then **apply a hyperplane** separation on that transformed data. In its simplest form, the kernel trick means transforming data into another dimension that has a clear dividing margin between classes of data.
+
+In practice, this transformation is more or less a **black box** because the feature space can be quite complex, but the idea is still the same.
+
+&lt;img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Kernel_trick_idea.svg/1000px-Kernel_trick_idea.svg.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+# Iris - Support Vector Machines
+
+
+```r
+library(e1071)
+
+iris_2dimension &lt;- iris[, c("Petal.Length", "Petal.Width", "Species")]
+index &lt;- caret::createDataPartition(iris_2dimension$Species, p = 0.3, list = F)
+train &lt;- iris_2dimension[index, ]
+test &lt;- iris_2dimension[-index, ]
+
+svmfit &lt;- e1071::svm(Species ~ ., data = train, kernel = "linear", scale = T)
+
+plot(svmfit, train)
+```
+
+&lt;img src="svm_files/figure-html/data_iris-1.png" style="display: block; margin: auto;" /&gt;
+---
+
+
+```r
+tuned &lt;- tune(svm, Species ~ ., data = train, kernel = "linear",
+              ranges = list(cost = 10^(-3:3)))
+
+summary(tuned)
+```
+
+```
+## 
+## Parameter tuning of 'svm':
+## 
+## - sampling method: 10-fold cross validation 
+## 
+## - best parameters:
+##  cost
+##     1
+## 
+## - best performance: 0 
+## 
+## - Detailed performance results:
+##    cost error dispersion
+## 1 1e-03 0.940 0.13498971
+## 2 1e-02 0.705 0.32011283
+## 3 1e-01 0.025 0.07905694
+## 4 1e+00 0.000 0.00000000
+## 5 1e+01 0.025 0.07905694
+## 6 1e+02 0.025 0.07905694
+## 7 1e+03 0.025 0.07905694
+```
+
+---
+# Iris - Support Vector Machines
+
+
+```r
+svmfit &lt;- svm(Species ~ ., data = train, kernel = "linear",
+              cost = 0.1, scale = T)
+
+plot(svmfit, train)
+```
+
+&lt;img src="svm_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
