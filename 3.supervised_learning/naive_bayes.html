@@ -4,7 +4,7 @@
     <title>Naive Bayes</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-19" />
+    <meta name="date" content="2019-03-20" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Naive Bayes
 ## Supervised learning
 ### Bea Hernández
-### 2019-03-19
+### 2019-03-20
 
 ---
 
@@ -29,7 +29,11 @@ class: inverse, center, middle
 ---
 # Naive Bayes Classification
 
-One way to do classification with probabilities is through the use of Bayesian statistics. Although this field can have a rather steep learning curve, essentially we are trying to answer the question, “Based on the features we have, what is the probability that the outcome is class X?” A naive Bayes classifier answers this question with a rather bold assumption: all of the predictors we have are independent of one another.
+One way to do classification with **probabilities** is through the use of Bayesian statistics. 
+
+We are trying to answer the question: *Based on the features we have, what is the probability that the outcome is class X?* 
+
+A naive Bayes classifier answers this question with a rather bold assumption: all of the predictors we have are **independent** of one another.
 
 ---
 class: inverse, center, middle
@@ -37,84 +41,78 @@ class: inverse, center, middle
 # Bayesian Statistics
 
 ---
-# Bayesian Statistics in a Nutshell
+# Independent variables
 
-Suppose that I ride my bike in 100 races and I win 54 of them. The probability of me winning a race, therefore, is just the number of times I’ve won divided by the total number of occurrences:
-`P(win) = 54 / 100 = 54 %`
+Suppose that I ride my bike in `100 races` and I `win 54` of them. The probability of me winning a race, therefore, is just the number of times I’ve won divided by the total number of occurrences:
 
---
-
-Suppose that I want to learn the probability of me winning a bike race and the probability of a wind storm occurring on Mars. These two things are completely independent of each other, given that there being a wind storm on Mars could not possibly affect the result of my bike race, and vice versa. Let’s assume that the probability of a wind storm on Mars is 20%. To calculate the probability of both of these independent things happening, we just multiply them:
-`P(win and Mars) = P(win) × P(Mars) = 54% × 20% = 10.8%`
+`P(win) = 54 / 100 = 0.54`
 
 --
 
-Consider a deck of cards. The probability of me picking any queen is 4/52. The probability of me picking any ace after picking out a queen, however, is dependent, because we just removed a card from the deck; thus, probability would now be 4/51. The probability would be defined like this:
-`P(Queen and Ace) = P(Queen) × P(Ace | Queen) = (4/52) × (4/51) = 0.6%`
+Suppose that I want to learn the probability of me `winning a bike race` and the probability of a `wind storm` occurring on Mars. These two things are completely **independent** of each other, given that there being a wind storm on Mars could not possibly affect the result of my bike race, and vice versa. Let’s assume that the probability of a wind storm on Mars is `0.2`. To calculate the probability of both of these independent things happening, we just multiply them:
 
---
-
-`P(A and B) = P(A)*P(B|A)`
-`P(B)*P(A|B) / P(A)=P(B|A)`
+`P(win and Mars) = P(win) * P(Mars) = 0.54 * 0.2 = 0.108`
 
 ---
+# Dependent variables
+
+Consider a deck of cards. The probability of me picking any queen is `4/52`. The probability of me picking any ace after picking out a queen, however, is dependent, because we just removed a card from the deck; thus, probability would now be `4/51`. The probability would be defined like this:
+
+`P(Queen and Ace) = P(Queen) × P(Ace | Queen) = (4/52) × (4/51) = 0.006`
+
+--
+
+`P(A and B) = P(A) * P(B | A)`
+
+`P(B) * P(A | B) / P(A) = P(B | A)`
+
+---
+# Titanic survival with Naive Bayes
 
 
 ```r
 library(e1071)
 library(tidyverse)
 titanic &lt;- as_tibble(Titanic)
+head(titanic, n = 3)
+```
+
+```
+## # A tibble: 3 x 5
+##   Class Sex   Age   Survived     n
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;
+## 1 1st   Male  Child No           0
+## 2 2nd   Male  Child No           0
+## 3 3rd   Male  Child No          35
 ```
 --
 
 
 ```r
 reps &lt;- rep.int(seq_len(nrow(titanic)), titanic$n)
-titanic_df &lt;- titanic[reps,] %&gt;% select(-n)
+titanic_df &lt;- titanic[reps, ] %&gt;% select(-n)
+head(titanic_df, n = 3)
+```
+
+```
+## # A tibble: 3 x 4
+##   Class Sex   Age   Survived
+##   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   
+## 1 3rd   Male  Child No      
+## 2 3rd   Male  Child No      
+## 3 3rd   Male  Child No
+```
+
+---
+# Titanic survival with Naive Bayes
+
+
+```r
 index &lt;- caret::createDataPartition(titanic_df$Survived, p = 0.2, list = F)
 train &lt;- titanic_df[index, ]
 test &lt;- titanic_df[-index, ]
-```
 
---
-
-
-```r
 nb &lt;- naiveBayes(as.factor(Survived) ~., data = train)
-nb
-```
-
-```
-## 
-## Naive Bayes Classifier for Discrete Predictors
-## 
-## Call:
-## naiveBayes.default(x = X, y = Y, laplace = laplace)
-## 
-## A-priori probabilities:
-## Y
-##       No      Yes 
-## 0.675737 0.324263 
-## 
-## Conditional probabilities:
-##      Class
-## Y            1st        2nd        3rd       Crew
-##   No  0.09395973 0.11073826 0.36577181 0.42953020
-##   Yes 0.35664336 0.16083916 0.21678322 0.26573427
-## 
-##      Sex
-## Y         Female       Male
-##   No  0.08389262 0.91610738
-##   Yes 0.46853147 0.53146853
-## 
-##      Age
-## Y          Adult      Child
-##   No  0.97315436 0.02684564
-##   Yes 0.91608392 0.08391608
-```
-
-
-```r
 nb_p &lt;- predict(nb, newdata = test %&gt;% select(-Survived))
 caret::confusionMatrix(as.factor(nb_p), as.factor(test$Survived))
 ```
@@ -124,28 +122,96 @@ caret::confusionMatrix(as.factor(nb_p), as.factor(test$Survived))
 ## 
 ##           Reference
 ## Prediction   No  Yes
-##        No  1091  281
-##        Yes  101  287
-##                                          
-##                Accuracy : 0.783          
-##                  95% CI : (0.7629, 0.802)
-##     No Information Rate : 0.6773         
-##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
-##                                          
-##                   Kappa : 0.4586         
-##  Mcnemar's Test P-Value : &lt; 2.2e-16      
-##                                          
-##             Sensitivity : 0.9153         
-##             Specificity : 0.5053         
-##          Pos Pred Value : 0.7952         
-##          Neg Pred Value : 0.7397         
-##              Prevalence : 0.6773         
-##          Detection Rate : 0.6199         
-##    Detection Prevalence : 0.7795         
-##       Balanced Accuracy : 0.7103         
-##                                          
-##        'Positive' Class : No             
+##        No  1087  285
+##        Yes  105  283
+##                                           
+##                Accuracy : 0.7784          
+##                  95% CI : (0.7583, 0.7976)
+##     No Information Rate : 0.6773          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.4473          
+##  Mcnemar's Test P-Value : &lt; 2.2e-16       
+##                                           
+##             Sensitivity : 0.9119          
+##             Specificity : 0.4982          
+##          Pos Pred Value : 0.7923          
+##          Neg Pred Value : 0.7294          
+##              Prevalence : 0.6773          
+##          Detection Rate : 0.6176          
+##    Detection Prevalence : 0.7795          
+##       Balanced Accuracy : 0.7051          
+##                                           
+##        'Positive' Class : No              
 ## 
+```
+
+---
+# Titanic survival with Naive Bayes
+
+```r
+A-priori probabilities:
+Y
+      No      Yes 
+0.675737 0.324263 
+
+Conditional probabilities:
+     Class
+Y            1st        2nd        3rd       Crew
+  No  0.08724832 0.09395973 0.34228188 0.47651007
+  Yes 0.23776224 0.15384615 0.21678322 0.39160839
+
+     Sex
+Y         Female       Male
+  No  0.08053691 0.91946309
+  Yes 0.41258741 0.58741259
+
+     Age
+Y          Adult      Child
+  No  0.97651007 0.02348993
+  Yes 0.93706294 0.06293706
+```
+
+---
+# Titanic survival with Naive Bayes
+
+```r
+Reference
+Prediction   No  Yes
+       No  1092  282
+       Yes  100  286
+                                         
+               Accuracy : 0.783          
+                 95% CI : (0.7629, 0.802)
+    No Information Rate : 0.6773         
+    P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+                                         
+                  Kappa : 0.458          
+ Mcnemar's Test P-Value : &lt; 2.2e-16      
+                                         
+            Sensitivity : 0.9161         
+            Specificity : 0.5035         
+         Pos Pred Value : 0.7948         
+         Neg Pred Value : 0.7409         
+             Prevalence : 0.6773         
+         Detection Rate : 0.6205         
+   Detection Prevalence : 0.7807         
+      Balanced Accuracy : 0.7098         
+                                         
+       'Positive' Class : No  
+```
+
+---
+# AUROC: Area under the RoC
+
+Generally speaking, Area Under the RoC (AUROC) statistic is used when you have imbalanced classes.
+
+
+```r
+library(plotROC)
+ggplot(nb_p, 
+       aes(m = M, d = factor(obs, levels = c("R", "M")))) + 
+    geom_roc(hjust = -0.4, vjust = 1.5) + coord_equal()
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
