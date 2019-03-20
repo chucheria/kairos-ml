@@ -69,5 +69,8 @@ vignettes/*.pdf
 # R package: bookdown caching files
 /*_files/
 
+## Files
+*/*_files
+
 # End of https://www.gitignore.io/api/r,macos
 
