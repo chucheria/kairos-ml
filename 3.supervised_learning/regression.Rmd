@@ -28,11 +28,11 @@ options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
 - There is no hard-and-fast rule about which type of regression model to fit to your data, however. 
 - Investigates the relationship between a **dependent** (target) and **independent** variables (predictor).
 - Types of regression:
-  - Linear Regression: relationship between dependent variable and one or more independent variables using a best fit straight line
-  - Polynomial Regression: the power of independent variable is more than 1
-  - Lasso Regression: Least Absolute Shrinkage and Selection Operator penalizes the absolute size of the regression coefficients
-  - Logistic Regression: find the probability of the event being a success or not.
-  - Other variations like: Stepwise Regression, Ridge Regression, and ElasticNet Regression
+  - *Linear*: relationship between dependent variable and one or more independent variables using a best fit straight line
+  - *Polynomial*: the power of independent variable is more than 1
+  - *Lasso*: Least Absolute Shrinkage and Selection Operator penalizes the absolute size of the regression coefficients
+  - *Logistic*: find the probability of the event being a success or not.
+  - Other variations like *Stepwise* Regression, *Ridge* Regression, and *ElasticNet* Regression
 
 ---
 class: inverse, center, middle
@@ -182,7 +182,7 @@ According to this linear equation, fuel efficiency is most sensitive to the weig
 library(dplyr)
 library(glmnet)
 y <- mtcars %>% select(mpg) %>% scale(center = TRUE, scale = FALSE) %>% as.matrix()
-X <- mtcars %>% select(-mpg) %>% as.matrix()
+X <- mtcars %>% select(-mpg) %>% scale(center = TRUE, scale = FALSE) %>% as.matrix()
 
 lasso_cv <- cv.glmnet(X, y, alpha = 1, standardize = TRUE)
 coef(lasso_cv)
@@ -262,17 +262,10 @@ class: inverse, center, middle
 ---
 # Stock prediction with logistic regression
 
-```{r logistic_data, message=F}
+```{r logistic_data, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
 library(ISLR)
 
 head(Smarket, n = 1)
-summary(Smarket)
-```
-
----
-# Stock prediction with logistic regression
-
-```{r boxplot_logistic, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
 ggplot(stack(Smarket %>% select(-Year)), aes(x = ind, y = values)) +
   geom_boxplot() +
   theme_minimal()
@@ -293,7 +286,7 @@ Volume and year are highly correlated, as well as Today and our target variable.
 ---
 # Stock prediction with logistic regression
 
-```{r model_logistic, warning=F}
+```{r model_logistic, message = F, warning=F}
 train <- Smarket %>% filter(Year < 2005)
 test <- Smarket %>% filter(Year >= 2005)
 

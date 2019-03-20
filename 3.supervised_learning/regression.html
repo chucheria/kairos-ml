@@ -4,7 +4,7 @@
     <title>Regression</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-19" />
+    <meta name="date" content="2019-03-20" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Regression
 ## Supervised learning
 ### Bea Hernández
-### 2019-03-19
+### 2019-03-20
 
 ---
 
@@ -33,11 +33,11 @@ class: inverse, center, middle
 - There is no hard-and-fast rule about which type of regression model to fit to your data, however. 
 - Investigates the relationship between a **dependent** (target) and **independent** variables (predictor).
 - Types of regression:
-  - Linear Regression: relationship between dependent variable and one or more independent variables using a best fit straight line
-  - Polynomial Regression: the power of independent variable is more than 1
-  - Lasso Regression: Least Absolute Shrinkage and Selection Operator penalizes the absolute size of the regression coefficients
-  - Logistic Regression: find the probability of the event being a success or not.
-  - Other variations like: Stepwise Regression, Ridge Regression, and ElasticNet Regression
+  - *Linear*: relationship between dependent variable and one or more independent variables using a best fit straight line
+  - *Polynomial*: the power of independent variable is more than 1
+  - *Lasso*: Least Absolute Shrinkage and Selection Operator penalizes the absolute size of the regression coefficients
+  - *Logistic*: find the probability of the event being a success or not.
+  - Other variations like *Stepwise* Regression, *Ridge* Regression, and *ElasticNet* Regression
 
 ---
 class: inverse, center, middle
@@ -259,7 +259,7 @@ According to this linear equation, fuel efficiency is most sensitive to the weig
 library(dplyr)
 library(glmnet)
 y &lt;- mtcars %&gt;% select(mpg) %&gt;% scale(center = TRUE, scale = FALSE) %&gt;% as.matrix()
-X &lt;- mtcars %&gt;% select(-mpg) %&gt;% as.matrix()
+X &lt;- mtcars %&gt;% select(-mpg) %&gt;% scale(center = TRUE, scale = FALSE) %&gt;% as.matrix()
 
 lasso_cv &lt;- cv.glmnet(X, y, alpha = 1, standardize = TRUE)
 coef(lasso_cv)
@@ -267,17 +267,17 @@ coef(lasso_cv)
 
 ```
 ## 11 x 1 sparse Matrix of class "dgCMatrix"
-##                        1
-## (Intercept) 13.380766879
-## cyl         -0.833427049
-## disp         .          
-## hp          -0.005886408
-## drat         .          
-## wt          -2.287815523
-## qsec         .          
-## vs           .          
-## am           .          
-## gear         .          
+##                         1
+## (Intercept)  6.503610e-16
+## cyl         -8.334270e-01
+## disp         .           
+## hp          -5.886408e-03
+## drat         .           
+## wt          -2.287816e+00
+## qsec         .           
+## vs           .           
+## am           .           
+## gear         .           
 ## carb         .
 ```
 
@@ -428,44 +428,12 @@ head(Smarket, n = 1)
 ```
 
 ```r
-summary(Smarket)
-```
-
-```
-##       Year           Lag1                Lag2          
-##  Min.   :2001   Min.   :-4.922000   Min.   :-4.922000  
-##  1st Qu.:2002   1st Qu.:-0.639500   1st Qu.:-0.639500  
-##  Median :2003   Median : 0.039000   Median : 0.039000  
-##  Mean   :2003   Mean   : 0.003834   Mean   : 0.003919  
-##  3rd Qu.:2004   3rd Qu.: 0.596750   3rd Qu.: 0.596750  
-##  Max.   :2005   Max.   : 5.733000   Max.   : 5.733000  
-##       Lag3                Lag4                Lag5         
-##  Min.   :-4.922000   Min.   :-4.922000   Min.   :-4.92200  
-##  1st Qu.:-0.640000   1st Qu.:-0.640000   1st Qu.:-0.64000  
-##  Median : 0.038500   Median : 0.038500   Median : 0.03850  
-##  Mean   : 0.001716   Mean   : 0.001636   Mean   : 0.00561  
-##  3rd Qu.: 0.596750   3rd Qu.: 0.596750   3rd Qu.: 0.59700  
-##  Max.   : 5.733000   Max.   : 5.733000   Max.   : 5.73300  
-##      Volume           Today           Direction 
-##  Min.   :0.3561   Min.   :-4.922000   Down:602  
-##  1st Qu.:1.2574   1st Qu.:-0.639500   Up  :648  
-##  Median :1.4229   Median : 0.038500             
-##  Mean   :1.4783   Mean   : 0.003138             
-##  3rd Qu.:1.6417   3rd Qu.: 0.596750             
-##  Max.   :3.1525   Max.   : 5.733000
-```
-
----
-# Stock prediction with logistic regression
-
-
-```r
 ggplot(stack(Smarket %&gt;% select(-Year)), aes(x = ind, y = values)) +
   geom_boxplot() +
   theme_minimal()
 ```
 
-&lt;img src="regression_files/figure-html/boxplot_logistic-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="regression_files/figure-html/logistic_data-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 # Stock prediction with logistic regression
@@ -491,13 +459,6 @@ train &lt;- Smarket %&gt;% filter(Year &lt; 2005)
 test &lt;- Smarket %&gt;% filter(Year &gt;= 2005)
 
 library(caret)
-```
-
-```
-## Loading required package: lattice
-```
-
-```r
 glm.fit &lt;- glm(Direction ~ Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume + Today, 
                data = train, family = binomial)
 coef(glm.fit)
