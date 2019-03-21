@@ -4,7 +4,7 @@
     <title>Naive Bayes</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-20" />
+    <meta name="date" content="2019-03-21" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Naive Bayes
 ## Supervised learning
 ### Bea Hernández
-### 2019-03-20
+### 2019-03-21
 
 ---
 
@@ -121,26 +121,26 @@ caret::confusionMatrix(as.factor(nb_p), as.factor(test$Survived))
 ## Confusion Matrix and Statistics
 ## 
 ##           Reference
-## Prediction   No  Yes
-##        No  1087  285
-##        Yes  105  283
+## Prediction  No Yes
+##        No  994 242
+##        Yes 198 326
 ##                                           
-##                Accuracy : 0.7784          
-##                  95% CI : (0.7583, 0.7976)
+##                Accuracy : 0.75            
+##                  95% CI : (0.7291, 0.7701)
 ##     No Information Rate : 0.6773          
-##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##     P-Value [Acc &gt; NIR] : 1.505e-11       
 ##                                           
-##                   Kappa : 0.4473          
-##  Mcnemar's Test P-Value : &lt; 2.2e-16       
+##                   Kappa : 0.4163          
+##  Mcnemar's Test P-Value : 0.04037         
 ##                                           
-##             Sensitivity : 0.9119          
-##             Specificity : 0.4982          
-##          Pos Pred Value : 0.7923          
-##          Neg Pred Value : 0.7294          
+##             Sensitivity : 0.8339          
+##             Specificity : 0.5739          
+##          Pos Pred Value : 0.8042          
+##          Neg Pred Value : 0.6221          
 ##              Prevalence : 0.6773          
-##          Detection Rate : 0.6176          
-##    Detection Prevalence : 0.7795          
-##       Balanced Accuracy : 0.7051          
+##          Detection Rate : 0.5648          
+##    Detection Prevalence : 0.7023          
+##       Balanced Accuracy : 0.7039          
 ##                                           
 ##        'Positive' Class : No              
 ## 
@@ -204,15 +204,26 @@ Prediction   No  Yes
 ---
 # AUROC: Area under the RoC
 
-Generally speaking, Area Under the RoC (AUROC) statistic is used when you have imbalanced classes.
-
 
 ```r
-library(plotROC)
-ggplot(nb_p, 
-       aes(m = M, d = factor(obs, levels = c("R", "M")))) + 
-    geom_roc(hjust = -0.4, vjust = 1.5) + coord_equal()
+library(ROCR)
+
+nb_pr &lt;- predict(nb, newdata = test %&gt;% select(-Survived), type = 'raw')
+predvec &lt;- ifelse(nb_p=="No", 1, 0)
+realvec &lt;- ifelse(test$Survived=="No", 1, 0)
+pred &lt;- prediction(predvec, realvec)
+perf &lt;- performance(pred, "tpr", "fpr")
+plot(perf, colorize = TRUE)
 ```
+
+&lt;img src="naive_bayes_files/figure-html/roc-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# AUROC: Area under the RoC
+
+**AUC - ROC** curve is a performance measurement for classification problem at various thresholds settings. Generally speaking, Area Under the RoC (AUROC) statistic is used when you have imbalanced classes. It tells how much model is capable of **distinguishing between classes**. Higher the AUC, better the model is at predicting 0s as 0s and 1s as 1s.
+
+&lt;img src="https://cdn-images-1.medium.com/max/1600/1*yF8hvKR9eNfqqej2JnVKzg.png" width="40%" style="display: block; margin: auto;" /&gt;&lt;img src="https://cdn-images-1.medium.com/max/800/1*-tPXUvvNIZDbqXP0qqYNuQ.png" width="40%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

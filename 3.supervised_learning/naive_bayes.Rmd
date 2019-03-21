@@ -149,11 +149,22 @@ Prediction   No  Yes
 ---
 # AUROC: Area under the RoC
 
-Generally speaking, Area Under the RoC (AUROC) statistic is used when you have imbalanced classes.
+```{r roc, message=F, warning = F, fig.align='center', fig.height=4, fig.width=11}
+library(ROCR)
 
-```{r roc, message=F, eval=F}
-library(plotROC)
-ggplot(nb_p, 
-       aes(m = M, d = factor(obs, levels = c("R", "M")))) + 
-    geom_roc(hjust = -0.4, vjust = 1.5) + coord_equal()
+nb_pr <- predict(nb, newdata = test %>% select(-Survived), type = 'raw')
+predvec <- ifelse(nb_p=="No", 1, 0)
+realvec <- ifelse(test$Survived=="No", 1, 0)
+pred <- prediction(predvec, realvec)
+perf <- performance(pred, "tpr", "fpr")
+plot(perf, colorize = TRUE)
+```
+
+---
+# AUROC: Area under the RoC
+
+**AUC - ROC** curve is a performance measurement for classification problem at various thresholds settings. Generally speaking, Area Under the RoC (AUROC) statistic is used when you have imbalanced classes. It tells how much model is capable of **distinguishing between classes**. Higher the AUC, better the model is at predicting 0s as 0s and 1s as 1s.
+
+```{r, fig.align='center', echo=F, out.width = '40%', fig.show='hold'}
+knitr::include_graphics(c('https://cdn-images-1.medium.com/max/1600/1*yF8hvKR9eNfqqej2JnVKzg.png', 'https://cdn-images-1.medium.com/max/800/1*-tPXUvvNIZDbqXP0qqYNuQ.png'))
 ```
