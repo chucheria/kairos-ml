@@ -80,19 +80,19 @@ summary(tuned)
 ## 
 ## - best parameters:
 ##  cost
-##    10
+##   0.1
 ## 
-## - best performance: 0.02 
+## - best performance: 0.025 
 ## 
 ## - Detailed performance results:
 ##    cost error dispersion
-## 1 1e-03  0.73 0.21628171
-## 2 1e-02  0.62 0.18737959
-## 3 1e-01  0.06 0.09660918
-## 4 1e+00  0.06 0.09660918
-## 5 1e+01  0.02 0.06324555
-## 6 1e+02  0.04 0.08432740
-## 7 1e+03  0.04 0.08432740
+## 1 1e-03 0.680 0.18135294
+## 2 1e-02 0.510 0.22335821
+## 3 1e-01 0.025 0.07905694
+## 4 1e+00 0.025 0.07905694
+## 5 1e+01 0.025 0.07905694
+## 6 1e+02 0.025 0.07905694
+## 7 1e+03 0.025 0.07905694
 ```
 
 ---
@@ -198,30 +198,30 @@ confusionMatrix(knn_p, test$Species)
 ##             Reference
 ## Prediction   setosa versicolor virginica
 ##   setosa         15          0         0
-##   versicolor      0         15         1
-##   virginica       0          0        14
+##   versicolor      0         14         1
+##   virginica       0          1        14
 ## 
 ## Overall Statistics
 ##                                           
-##                Accuracy : 0.9778          
-##                  95% CI : (0.8823, 0.9994)
+##                Accuracy : 0.9556          
+##                  95% CI : (0.8485, 0.9946)
 ##     No Information Rate : 0.3333          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
-##                   Kappa : 0.9667          
+##                   Kappa : 0.9333          
 ##  Mcnemar's Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: setosa Class: versicolor Class: virginica
-## Sensitivity                 1.0000            1.0000           0.9333
-## Specificity                 1.0000            0.9667           1.0000
-## Pos Pred Value              1.0000            0.9375           1.0000
-## Neg Pred Value              1.0000            1.0000           0.9677
+## Sensitivity                 1.0000            0.9333           0.9333
+## Specificity                 1.0000            0.9667           0.9667
+## Pos Pred Value              1.0000            0.9333           0.9333
+## Neg Pred Value              1.0000            0.9667           0.9667
 ## Prevalence                  0.3333            0.3333           0.3333
-## Detection Rate              0.3333            0.3333           0.3111
-## Detection Prevalence        0.3333            0.3556           0.3111
-## Balanced Accuracy           1.0000            0.9833           0.9667
+## Detection Rate              0.3333            0.3111           0.3111
+## Detection Prevalence        0.3333            0.3333           0.3333
+## Balanced Accuracy           1.0000            0.9500           0.9500
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
