@@ -4,7 +4,7 @@
     <title>Support Vector Machines</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-20" />
+    <meta name="date" content="2019-03-21" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Support Vector Machines
 ## Supervised learning
 ### Bea Hernández
-### 2019-03-20
+### 2019-03-21
 
 ---
 
@@ -60,7 +60,9 @@ plot(svmfit, train)
 ```
 
 &lt;img src="svm_files/figure-html/data_iris-1.png" style="display: block; margin: auto;" /&gt;
+
 ---
+# Iris - Support Vector Machines
 
 
 ```r
@@ -78,19 +80,19 @@ summary(tuned)
 ## 
 ## - best parameters:
 ##  cost
-##     1
+##    10
 ## 
-## - best performance: 0 
+## - best performance: 0.02 
 ## 
 ## - Detailed performance results:
 ##    cost error dispersion
-## 1 1e-03 0.940 0.13498971
-## 2 1e-02 0.705 0.32011283
-## 3 1e-01 0.025 0.07905694
-## 4 1e+00 0.000 0.00000000
-## 5 1e+01 0.025 0.07905694
-## 6 1e+02 0.025 0.07905694
-## 7 1e+03 0.025 0.07905694
+## 1 1e-03  0.73 0.21628171
+## 2 1e-02  0.62 0.18737959
+## 3 1e-01  0.06 0.09660918
+## 4 1e+00  0.06 0.09660918
+## 5 1e+01  0.02 0.06324555
+## 6 1e+02  0.04 0.08432740
+## 7 1e+03  0.04 0.08432740
 ```
 
 ---
@@ -105,6 +107,122 @@ plot(svmfit, train)
 ```
 
 &lt;img src="svm_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+
+# k-Nearest Neighors
+
+---
+# kNN
+
+k-nearest neighbors (kNN) is a rather simple machine learning algorithm that basically takes all the available cases in our data and predicts a target based on some kind of similarity measure—in this case, distance. We supose our neighbors to be like us, so the distance gives us a prediction.
+
+For a regression example, the kNN algorithm calculates the average of our response variable for the kNNs. The mathematical underpinnings are the same for classification, but tweaked slightly because those are categorical instead of numeric values.
+
+The algorithm is highly unbiased in nature and makes no prior assumption of the underlying data. Being simple and effective in nature, it is easy to implement and has gained good popularity. Indeed it is simple but kNN algorithm has drawn a lot of flake for being extremely simple! If we take a deeper look, this doesn’t create a model since there’s no abstraction process involved. Yes, the training process is really fast as the data is stored verbatim (hence lazy learner) but the prediction time is pretty high with useful insights missing at times. Therefore, building this algorithm requires time to be invested in data preparation (especially treating the missing data and categorical features) to obtain a robust model.
+
+---
+# Iris with kNN
+
+
+```r
+library(caret)
+
+nor &lt;-function(x) { (x -min(x))/(max(x)-min(x)) }
+
+index &lt;- createDataPartition(iris$Species, p = 0.7, list=F)
+
+train &lt;- iris[index, ]
+test &lt;- iris[-index, ]
+
+prop.table(table(train$Species)) * 100
+```
+
+```
+## 
+##     setosa versicolor  virginica 
+##   33.33333   33.33333   33.33333
+```
+
+```r
+prop.table(table(iris$Species)) * 100
+```
+
+```
+## 
+##     setosa versicolor  virginica 
+##   33.33333   33.33333   33.33333
+```
+
+---
+# Iris with kNN
+
+
+```r
+trainX &lt;- train[, c(1,2,3,4)]
+preProcValues &lt;- preProcess(x = trainX, method = c("center", "scale"))
+preProcValues
+```
+
+```
+## Created from 105 samples and 4 variables
+## 
+## Pre-processing:
+##   - centered (4)
+##   - ignored (0)
+##   - scaled (4)
+```
+
+```r
+knn &lt;- train(Species ~ ., data = train, method = "knn", 
+             preProcess = c("center","scale"), tuneLength = 20)
+```
+
+--
+
+&lt;img src="svm_files/figure-html/train-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Iris with kNN
+
+
+```r
+knn_p &lt;- predict(knn, newdata = test)
+confusionMatrix(knn_p, test$Species)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##             Reference
+## Prediction   setosa versicolor virginica
+##   setosa         15          0         0
+##   versicolor      0         15         1
+##   virginica       0          0        14
+## 
+## Overall Statistics
+##                                           
+##                Accuracy : 0.9778          
+##                  95% CI : (0.8823, 0.9994)
+##     No Information Rate : 0.3333          
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
+##                                           
+##                   Kappa : 0.9667          
+##  Mcnemar's Test P-Value : NA              
+## 
+## Statistics by Class:
+## 
+##                      Class: setosa Class: versicolor Class: virginica
+## Sensitivity                 1.0000            1.0000           0.9333
+## Specificity                 1.0000            0.9667           1.0000
+## Pos Pred Value              1.0000            0.9375           1.0000
+## Neg Pred Value              1.0000            1.0000           0.9677
+## Prevalence                  0.3333            0.3333           0.3333
+## Detection Rate              0.3333            0.3333           0.3111
+## Detection Prevalence        0.3333            0.3556           0.3111
+## Balanced Accuracy           1.0000            0.9833           0.9667
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
