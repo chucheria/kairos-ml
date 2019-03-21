@@ -82,17 +82,17 @@ summary(tuned)
 ##  cost
 ##   0.1
 ## 
-## - best performance: 0.025 
+## - best performance: 0.02 
 ## 
 ## - Detailed performance results:
 ##    cost error dispersion
-## 1 1e-03 0.680 0.18135294
-## 2 1e-02 0.510 0.22335821
-## 3 1e-01 0.025 0.07905694
-## 4 1e+00 0.025 0.07905694
-## 5 1e+01 0.025 0.07905694
-## 6 1e+02 0.025 0.07905694
-## 7 1e+03 0.025 0.07905694
+## 1 1e-03 0.840 0.20110804
+## 2 1e-02 0.635 0.25609243
+## 3 1e-01 0.020 0.06324555
+## 4 1e+00 0.020 0.06324555
+## 5 1e+01 0.045 0.09559754
+## 6 1e+02 0.045 0.09559754
+## 7 1e+03 0.065 0.10554093
 ```
 
 ---
@@ -116,11 +116,13 @@ class: inverse, center, middle
 ---
 # kNN
 
-k-nearest neighbors (kNN) is a rather simple machine learning algorithm that basically takes all the available cases in our data and predicts a target based on some kind of similarity measure—in this case, distance. We supose our neighbors to be like us, so the distance gives us a prediction.
+**k-nearest neighbors** (kNN) is a rather simple machine learning algorithm that basically takes all the available cases in our data and predicts a target based on some kind of similarity measure—in this case, distance. We supose **our neighbors to be like us**, so the distance gives us a prediction.
 
-For a regression example, the kNN algorithm calculates the average of our response variable for the kNNs. The mathematical underpinnings are the same for classification, but tweaked slightly because those are categorical instead of numeric values.
+For a **regression** example, the kNN algorithm calculates the *average* of our response variable for the kNNs. The mathematical underpinnings are the same for classification, but tweaked slightly because those are categorical instead of numeric values.
 
-The algorithm is highly unbiased in nature and makes no prior assumption of the underlying data. Being simple and effective in nature, it is easy to implement and has gained good popularity. Indeed it is simple but kNN algorithm has drawn a lot of flake for being extremely simple! If we take a deeper look, this doesn’t create a model since there’s no abstraction process involved. Yes, the training process is really fast as the data is stored verbatim (hence lazy learner) but the prediction time is pretty high with useful insights missing at times. Therefore, building this algorithm requires time to be invested in data preparation (especially treating the missing data and categorical features) to obtain a robust model.
+The algorithm is highly unbiased in nature and **makes no prior assumption** of the underlying data. Being simple and effective in nature, it is easy to implement and has gained good popularity Building this algorithm requires time to be invested in data preparation (especially treating the missing data and categorical features) to obtain a robust model.
+
+This model can be used also as a **unsupervised** model, since the distance can be used for clustering without a target variable.
 
 ---
 # Iris with kNN
@@ -198,30 +200,30 @@ confusionMatrix(knn_p, test$Species)
 ##             Reference
 ## Prediction   setosa versicolor virginica
 ##   setosa         15          0         0
-##   versicolor      0         14         1
-##   virginica       0          1        14
+##   versicolor      0         14         0
+##   virginica       0          1        15
 ## 
 ## Overall Statistics
 ##                                           
-##                Accuracy : 0.9556          
-##                  95% CI : (0.8485, 0.9946)
+##                Accuracy : 0.9778          
+##                  95% CI : (0.8823, 0.9994)
 ##     No Information Rate : 0.3333          
 ##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16       
 ##                                           
-##                   Kappa : 0.9333          
+##                   Kappa : 0.9667          
 ##  Mcnemar's Test P-Value : NA              
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: setosa Class: versicolor Class: virginica
-## Sensitivity                 1.0000            0.9333           0.9333
-## Specificity                 1.0000            0.9667           0.9667
-## Pos Pred Value              1.0000            0.9333           0.9333
-## Neg Pred Value              1.0000            0.9667           0.9667
+## Sensitivity                 1.0000            0.9333           1.0000
+## Specificity                 1.0000            1.0000           0.9667
+## Pos Pred Value              1.0000            1.0000           0.9375
+## Neg Pred Value              1.0000            0.9677           1.0000
 ## Prevalence                  0.3333            0.3333           0.3333
-## Detection Rate              0.3333            0.3111           0.3111
-## Detection Prevalence        0.3333            0.3333           0.3333
-## Balanced Accuracy           1.0000            0.9500           0.9500
+## Detection Rate              0.3333            0.3111           0.3333
+## Detection Prevalence        0.3333            0.3111           0.3556
+## Balanced Accuracy           1.0000            0.9667           0.9833
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

@@ -30,6 +30,8 @@ Decision tree is a type of supervised learning algorithm that can be used in bot
 knitr::include_graphics('http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1528907338/decision-tree_c2yyos.png')
 ```
 
+--
+
 - **Root Node** represents the entire population or sample.
 - **Splitting** is a process of dividing a node into two or more sub-nodes.
 - When a sub-node splits into further sub-nodes, it is called a **Decision Node.**
