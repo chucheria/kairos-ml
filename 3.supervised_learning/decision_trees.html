@@ -71,13 +71,31 @@ You begin by looking at how a decision tree works by splitting on the variable *
 &lt;img src="figs/decision-splitting.png" width="60%" style="display: block; margin: auto;" /&gt;
 
 ---
+# Iris with Random Forest
+
+
+```r
+library(randomForest)
+
+rf &lt;- randomForest(Species ~ ., data = iris, importance = TRUE, 
+                   proximity = TRUE, as.tree = T, ntree=500)
+
+#devtools::install_github('araastat/reprtree')
+reprtree:::plot.getTree(rf)
+```
+
+&lt;img src="decision_trees_files/figure-html/split_tree-1.png" style="display: block; margin: auto;" /&gt;
+
+---
 # Pros and cons
 
-The major advantage of using decision trees is that they are intuitively very easy to explain. They closely mirror human decision-making compared to other regression and classification approaches. They can be displayed graphically, and they can easily handle qualitative predictors without the need to create dummy variables.
+The major advantage of using decision trees is that they are intuitively **very easy to explain**. They can be displayed graphically, and they can easily handle qualitative predictors *without* the need to create dummy variables.
 
-However, decision trees generally do not have the same level of predictive accuracy as other approaches, since they aren't quite robust. A small change in the data can cause a large change in the final estimated tree.
+However, decision trees generally do not have the same level of predictive accuracy as other approaches, since **they aren't quite robust**. A small change in the data can cause a large change in the final estimated tree. Decision trees are prone to **overfitting**, especially when a tree is particularly deep. This is due to the amount of specificity we look at leading to smaller sample of events that meet the previous assumptions.
 
-By aggregating many decision trees, using methods like bagging, random forests, and boosting, the predictive performance of decision trees can be substantially improved.
+**Random forest** builds multiple decision trees and merges them together to get a more accurate and stable prediction.
+
+&lt;img src="https://qph.fs.quoracdn.net/main-qimg-55d780e747ab1c9decd7f3828cc684a9" width="45%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
