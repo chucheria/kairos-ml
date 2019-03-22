@@ -1,0 +1,100 @@
+---
+title: "Principal component analysis"
+subtitle: "Supervised learning"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# Principal component analysis
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
+       fig.retina = 3)
+```
+
+---
+# PCA
+
+Short for **principal component analysis**, PCA is a way to bring out strong patterns from large and complex datasets. If you had some kind of example dataset with 30 or 40 features, but most of them were highly correlated with one another, you could run a PCA algorithm on it and **reduce the data** to just two features. This would reduce the computational complexity of the dataset considerably.
+
+PCA can help us take complex data and visualize it in a more compact space for easier analysis. We can think that it is a way to create compact variables which include our original values and we transform the plane. PCA seeks to find a series of vectors that describe variance in the data. 
+
+### How do we do it and what does it mean?
+
+---
+# Fuel efficiency PCA
+
+```{r cors, message=F, warning = F, fig.align='center', fig.height= 6, fig.width=11}
+library(corrplot)
+cors <- cor(mtcars)
+corrplot(cors, method = 'shade')
+```
+
+---
+# Simplify your data
+
+```{r pca}
+pca <- princomp(mtcars, scores = TRUE, cor = TRUE)
+summary(pca)
+```
+
+You are advised to use the covariance matrix when the variable are on similar scales and the correlation matrix when the scales of the variables differ.
+
+---
+# Fuel efficiency with PCA
+
+This table shows how important each of these *mysterious* principal components are to the overall dataset. The row that you’re most interested in is the **Proportion of Variance**, which tells you **how much of the data** is explained by that principal component. The components are always sorted by how important they are, so the most important components will always be the first few.
+
+What does *component 1* mean to us as humans or decision makers? In PCA, you can look at the **loadings** to see how much of each variable is contained in each component that you’re looking at, these values are the correlations between the principal component and the features with which you started. This example shows just the first five principal components, as components 6 through 9 are not really that useful anyway.
+
+---
+# PCA Loadings
+
+```{r loadings, warning=F}
+pca$loadings[, 1:5]
+```
+
+The closer the **correlation** number is to 1 or –1 for each combination of component and feature, the more that feature is important to that component. Let’s look at component 1. This one has a balance of all the starting features, with `mpg` being the dominant positive value, and `cyl` being the dominant negative value. Component 2 is mostly dominated by the variables `qsec`, `gear`, and `am`, in that order. Likewise for the rest of the components.
+
+---
+# PCA Loadings
+
+- Component 1 is correlated to mpg and cyl
+- Component 2 is correlated to qsec, gear, and am
+
+```{r scores}
+as.data.frame(pca$scores[1:10, 1:2])
+```
+
+---
+# Fuel efficiency with PCA
+
+```{r plot_pca, message=F, warning = F, fig.align='center', fig.width=11, fig.height=5}
+scores.df <- data.frame(pca$scores)
+
+plot(x = scores.df$Comp.1, y = scores.df$Comp.2, xlab = "Comp1", ylab = "Comp2")
+text(scores.df$Comp.1, scores.df$Comp.2, labels = row.names(scores.df), 
+     cex = 0.7, pos = 3)
+```
+
+---
+# Fuel efficiency without PCA
+```{r plot, message=F, warning = F, fig.align='center', fig.width=11, fig.height=6}
+plot(x = mtcars$qsec, y = mtcars$mpg, xlab = "qsec", ylab = "mpg")
+text(mtcars$qsec, mtcars$mpg, labels = row.names(mtcars), cex = 0.7, pos = 3)
+```
+
+---
+# Fuel efficiency with PCA
+
+Notice that the **values of the axes** here are also somewhat different than the starting variable values. This is because some PCA algorithms have built-in feature scaling techniques that make sure all of the variables are within the same range of one another for comparison’s sake; otherwise, if you had one variable (like the vehicle’s weight) that could be hundreds or thousands of times bigger than another variable (like number of cylinders), the analysis could be very misleading. With the `princomp` function, this feature scaling is built in, but other PCA algorithms in R might require you to explicitly enable scaling.
+

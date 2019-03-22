@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Principal component analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Bea Hernández" />
+    <meta name="date" content="2019-03-22" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Principal component analysis
+## Supervised learning
+### Bea Hernández
+### 2019-03-22
+
+---
+
+class: inverse, center, middle
+
+# Principal component analysis
+
+
+
+---
+# PCA
+
+Short for **principal component analysis**, PCA is a way to bring out strong patterns from large and complex datasets. If you had some kind of example dataset with 30 or 40 features, but most of them were highly correlated with one another, you could run a PCA algorithm on it and **reduce the data** to just two features. This would reduce the computational complexity of the dataset considerably.
+
+PCA can help us take complex data and visualize it in a more compact space for easier analysis. We can think that it is a way to create compact variables which include our original values and we transform the plane. PCA seeks to find a series of vectors that describe variance in the data. 
+
+### How do we do it and what does it mean?
+
+---
+# Fuel efficiency PCA
+
+
+```r
+library(corrplot)
+cors &lt;- cor(mtcars)
+corrplot(cors, method = 'shade')
+```
+
+&lt;img src="pca_files/figure-html/cors-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Simplify your data
+
+
+```r
+pca &lt;- princomp(mtcars, scores = TRUE, cor = TRUE)
+summary(pca)
+```
+
+```
+## Importance of components:
+##                           Comp.1    Comp.2     Comp.3     Comp.4
+## Standard deviation     2.5706809 1.6280258 0.79195787 0.51922773
+## Proportion of Variance 0.6007637 0.2409516 0.05701793 0.02450886
+## Cumulative Proportion  0.6007637 0.8417153 0.89873322 0.92324208
+##                            Comp.5     Comp.6     Comp.7     Comp.8
+## Standard deviation     0.47270615 0.45999578 0.36777981 0.35057301
+## Proportion of Variance 0.02031374 0.01923601 0.01229654 0.01117286
+## Cumulative Proportion  0.94355581 0.96279183 0.97508837 0.98626123
+##                             Comp.9     Comp.10     Comp.11
+## Standard deviation     0.277572792 0.228112781 0.148473587
+## Proportion of Variance 0.007004241 0.004730495 0.002004037
+## Cumulative Proportion  0.993265468 0.997995963 1.000000000
+```
+
+You are advised to use the covariance matrix when the variable are on similar scales and the correlation matrix when the scales of the variables differ.
+
+---
+# Fuel efficiency with PCA
+
+This table shows how important each of these *mysterious* principal components are to the overall dataset. The row that you’re most interested in is the **Proportion of Variance**, which tells you **how much of the data** is explained by that principal component. The components are always sorted by how important they are, so the most important components will always be the first few.
+
+What does *component 1* mean to us as humans or decision makers? In PCA, you can look at the **loadings** to see how much of each variable is contained in each component that you’re looking at, these values are the correlations between the principal component and the features with which you started. This example shows just the first five principal components, as components 6 through 9 are not really that useful anyway.
+
+---
+# PCA Loadings
+
+
+```r
+pca$loadings[, 1:5]
+```
+
+```
+##          Comp.1      Comp.2      Comp.3       Comp.4      Comp.5
+## mpg   0.3625305  0.01612440  0.22574419  0.022540255  0.10284468
+## cyl  -0.3739160  0.04374371  0.17531118  0.002591838  0.05848381
+## disp -0.3681852 -0.04932413  0.06148414 -0.256607885  0.39399530
+## hp   -0.3300569  0.24878402 -0.14001476  0.067676157  0.54004744
+## drat  0.2941514  0.27469408 -0.16118879 -0.854828743  0.07732727
+## wt   -0.3461033 -0.14303825 -0.34181851 -0.245899314 -0.07502912
+## qsec  0.2004563 -0.46337482 -0.40316904 -0.068076532 -0.16466591
+## vs    0.3065113 -0.23164699 -0.42881517  0.214848616  0.59953955
+## am    0.2349429  0.42941765  0.20576657  0.030462908  0.08978128
+## gear  0.2069162  0.46234863 -0.28977993  0.264690521  0.04832960
+## carb -0.2140177  0.41357106 -0.52854459  0.126789179 -0.36131875
+```
+
+The closer the **correlation** number is to 1 or –1 for each combination of component and feature, the more that feature is important to that component. Let’s look at component 1. This one has a balance of all the starting features, with `mpg` being the dominant positive value, and `cyl` being the dominant negative value. Component 2 is mostly dominated by the variables `qsec`, `gear`, and `am`, in that order. Likewise for the rest of the components.
+
+---
+# PCA Loadings
+
+- Component 1 is correlated to mpg and cyl
+- Component 2 is correlated to qsec, gear, and am
+
+
+```r
+as.data.frame(pca$scores[1:10, 1:2])
+```
+
+```
+##                        Comp.1     Comp.2
+## Mazda RX4          0.65721320  1.7354457
+## Mazda RX4 Wag      0.62939551  1.5500334
+## Datsun 710         2.77939704 -0.1464566
+## Hornet 4 Drive     0.31177071 -2.3630190
+## Hornet Sportabout -1.97448894 -0.7544022
+## Valiant            0.05613753 -2.7859996
+## Duster 360        -3.00267429  0.3348874
+## Merc 240D          2.05532873 -1.4651808
+## Merc 230           2.28740838 -1.9835265
+## Merc 280           0.52638121 -0.1620126
+```
+
+---
+# Fuel efficiency with PCA
+
+
+```r
+scores.df &lt;- data.frame(pca$scores)
+
+plot(x = scores.df$Comp.1, y = scores.df$Comp.2, xlab = "Comp1", ylab = "Comp2")
+text(scores.df$Comp.1, scores.df$Comp.2, labels = row.names(scores.df), 
+     cex = 0.7, pos = 3)
+```
+
+&lt;img src="pca_files/figure-html/plot_pca-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Fuel efficiency without PCA
+
+```r
+plot(x = mtcars$qsec, y = mtcars$mpg, xlab = "qsec", ylab = "mpg")
+text(mtcars$qsec, mtcars$mpg, labels = row.names(mtcars), cex = 0.7, pos = 3)
+```
+
+&lt;img src="pca_files/figure-html/plot-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+# Fuel efficiency with PCA
+
+Notice that the **values of the axes** here are also somewhat different than the starting variable values. This is because some PCA algorithms have built-in feature scaling techniques that make sure all of the variables are within the same range of one another for comparison’s sake; otherwise, if you had one variable (like the vehicle’s weight) that could be hundreds or thousands of times bigger than another variable (like number of cylinders), the analysis could be very misleading. With the `princomp` function, this feature scaling is built in, but other PCA algorithms in R might require you to explicitly enable scaling.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

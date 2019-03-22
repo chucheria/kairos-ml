@@ -1,0 +1,71 @@
+---
+title: "K-Means"
+subtitle: "Supervised learning"
+author: "Bea Hernández"
+date: "`r Sys.Date()`"
+output: 
+  xaringan::moon_reader:
+    css: [default, metropolis, metropolis-fonts]
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: inverse, center, middle
+
+# K-means
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, eval = FALSE, message = FALSE,
+       fig.retina = 3)
+```
+
+---
+# K-Means
+
+Clustering is when you have a set of data and want to define classes based on how closely they are grouped. Sometimes, groupings of data might not be immediately obvious, and a clustering algorithm can help you find patterns where they might otherwise be difficult to see explicitly. Clustering is a good example of an ecosystem of algorithms that can be used both in a supervised and unsupervised case. It’s one of the most popular forms of classification, and one of the most popular clustering models is the kmeans algorithm.
+
+
+```{r pairs, message=F, warning = F, fig.align='center', fig.width=11}
+plot(x = iris$Petal.Length, y = iris$Petal.Width, xlab = "Petal Length",
+    ylab = "Petal Width")
+```
+
+---
+# Fuel efficiency PCA
+
+What if we wanted to try to find three distinct groups in which to classify this dataset? The human brain is remarkably good at finding patterns and structure, so the clumping of data in the lower-left corner of Figure 2-3 stands out as one obvious cluster of data. But what about the rest? How do we go about breaking the data in the upper-right part of the plot into two more groups? One clustering algorithm that can accomplish this is the kmeans() approach to clustering.
+
+This algorithm works by first placing a number of random test points in our data—in this case, two. Each of our real data points is measured as a distance from these test points, and then the test points are moved in a way to minimize that distance, as shown in Figure 2-4:
+
+
+```{r, message=F, warning = F, fig.align='center', fig.width=11}
+data = data.frame(iris$Petal.Length, iris$Petal.Width)
+
+iris.kmeans <- kmeans(data, 2)
+
+plot(x = iris$Petal.Length, y = iris$Petal.Width, pch = iris.kmeans$cluster,
+    xlab = "Petal Length", ylab = "Petal Width")
+points(iris.kmeans$centers, pch = 8, cex = 2)
+```
+
+we can see how the algorithm works by splitting the data into two major groups. In the lower left is one cluster, denoted by the small triangles, and in the upper right there is another cluster labeled with circular data points. We see two big asterisks that mark where the cluster centers have finally stopped iterating. Any point that we further add to the data is marked as being in a cluster if it’s closer to one versus another. The points in the lower left are pretty well distinct from the others, but there is one outlier data point. 
+
+---
+Let’s use one more cluster, shown in Figure 2-5, to help make a little more sense of the data:
+```{r, message=F, warning = F, fig.align='center', fig.width=11}
+iris.kmeans3 <- kmeans(data, 3)
+plot(x = iris$Petal.Length, y = iris$Petal.Width, pch = iris.kmeans3$cluster,
+    xlab = "Petal Length", ylab = "Petal Width")
+
+points(iris.kmeans3$centers, pch = 8, cex = 2)
+```
+
+---
+
+Now you can see that the larger group of data has been split further into two clusters of data that look to be about equal in size. There are three clusters in total with three different centers to the data. You could keep going by adding more and more cluster centers to the data, but you would be losing out on valuable information that way. If every single data point in the set were its own cluster, it would wind up being meaningless as far as classification goes. This is where you need to use a gut intuition to determine the appropriate level of fitting to the data. Too few clusters and the data is underfit: there isn’t a good way to determine structure. Too many clusters and you have the opposite problem: there’s far too much structure to make sense of simply.
+
+```{r}
+table(iris.kmeans3$cluster, iris$Species)
+```
