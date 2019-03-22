@@ -4,7 +4,7 @@
     <title>Tree-Based Methods</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-21" />
+    <meta name="date" content="2019-03-22" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -16,7 +16,7 @@ class: center, middle, inverse, title-slide
 # Tree-Based Methods
 ## Supervised learning
 ### Bea Hernández
-### 2019-03-21
+### 2019-03-22
 
 ---
 
@@ -96,6 +96,26 @@ However, decision trees generally do not have the same level of predictive accur
 **Random forest** builds multiple decision trees and merges them together to get a more accurate and stable prediction.
 
 &lt;img src="https://qph.fs.quoracdn.net/main-qimg-55d780e747ab1c9decd7f3828cc684a9" width="45%" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+
+# Gradient Boosted Trees and XGBoost
+
+---
+# Gradient Boosted Trees and XGBoost
+
+### Gradient Boosted Trees
+
+When building a decision tree, a challenge is to decide how to split a current leaf. A *greedy* way to do this is to consider every possible split on the remaining features and calculate the new error for each split; you could then pick the tree which most reduces your loss.
+
+### XGBoost
+
+XGBoost stands for eXtreme Gradient Boosting. XGBoost is one of the fastest implementations of gradient boosted trees.
+
+It does this by tackling one of the major inefficiencies of gradient boosted trees: considering the potential loss for all possible splits to create a new branch (especially if you consider the case where there are thousands of features, and therefore thousands of possible splits)
+
+Although XGBoost implements a few regularization tricks, this speed up is by far the most useful feature of the library, allowing many hyperparameter settings to be investigated quickly. This is helpful because there are many, many hyperparameters to tune.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
