@@ -1,6 +1,6 @@
 ---
 title: "Principal component analysis"
-subtitle: "Unupervised learning"
+subtitle: "Unsupervised learning"
 author: "Bea Hernández"
 date: "`r Sys.Date()`"
 output: 
