@@ -4,7 +4,7 @@
     <title>K-Means</title>
     <meta charset="utf-8" />
     <meta name="author" content="Bea Hernández" />
-    <meta name="date" content="2019-03-21" />
+    <meta name="date" content="2019-03-22" />
     <link href="libs/remark-css/default.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
     <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
@@ -14,9 +14,9 @@
 class: center, middle, inverse, title-slide
 
 # K-Means
-## Supervised learning
+## Unsupervised learning
 ### Bea Hernández
-### 2019-03-21
+### 2019-03-22
 
 ---
 
@@ -29,7 +29,7 @@ class: inverse, center, middle
 ---
 # K-Means
 
-Clustering is when you have a set of data and want to define classes based on how closely they are grouped. Sometimes, groupings of data might not be immediately obvious, and a clustering algorithm can help you find patterns where they might otherwise be difficult to see explicitly. Clustering is a good example of an ecosystem of algorithms that can be used both in a supervised and unsupervised case. It’s one of the most popular forms of classification, and one of the most popular clustering models is the kmeans algorithm.
+**Clustering** is when you have a set of data and want to define classes based on how **closely** they are grouped. Sometimes, groupings of data might not be immediately obvious, and a clustering algorithm can help you find patterns where they might otherwise be difficult to see explicitly. Clustering is a good example of an ecosystem of algorithms that can be **used both in a supervised and unsupervised** case. It’s one of the most popular forms of classification, and one of the most popular clustering models is the `k-means` algorithm.
 
 
 
@@ -41,56 +41,97 @@ plot(x = iris$Petal.Length, y = iris$Petal.Width, xlab = "Petal Length",
 &lt;img src="k-means_files/figure-html/pairs-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
-# Fuel efficiency PCA
+# Clustering
 
-What if we wanted to try to find three distinct groups in which to classify this dataset? The human brain is remarkably good at finding patterns and structure, so the clumping of data in the lower-left corner of Figure 2-3 stands out as one obvious cluster of data. But what about the rest? How do we go about breaking the data in the upper-right part of the plot into two more groups? One clustering algorithm that can accomplish this is the kmeans() approach to clustering.
+## Types
 
-This algorithm works by first placing a number of random test points in our data—in this case, two. Each of our real data points is measured as a distance from these test points, and then the test points are moved in a way to minimize that distance, as shown in Figure 2-4:
+- **Hard clustering**: in hard clustering, each data object or point either belongs to a cluster completely or not. For example in the Uber dataset, each location belongs to either one borough or the other.
+- **Soft clustering**: in soft clustering, a data point can belong to more than one cluster with some probability or likelihood value. For example, you could identify some locations as the border points belonging to two or more boroughs.
 
+--
+
+## Clustering Algorithms
+
+- **Connectivity-based clustering**: the main idea behind this clustering is that data points that are closer in the data space are more related (similar) than to data points farther away. The clusters are formed by connecting data points according to their distance. 
+- **Centroid-based clustering**: in this type of clustering, clusters are represented by a central vector or a centroid. This centroid might not necessarily be a member of the dataset. This is an iterative clustering algorithms in which the notion of similarity is derived by how close a data point is to the centroid of the cluster.
+
+---
+# Clustering
+
+## Clustering Algorithms
+
+- **Distribution-based clustering**: based on the notion of how probable is it for a data point to belong to a certain distribution, such as the Gaussian distribution, for example. Data points in a cluster belong to the same distribution. These models have a strong theoritical foundation, however they often suffer from overfitting.
+
+- **Density-based methods**: defined as areas of higher density within the data space compared to other regions. Data points in the sparse areas are usually considered to be noise and/or border points. 
+
+---
+# Iris with K-means
+
+What if we wanted to try to find *three* distinct groups in which to classify this dataset? The clumping of data in the lower-left corner stands out as one obvious cluster of data. But what about the rest?
+
+How do we go about **breaking the data** in the upper-right part of the plot into two more groups? One clustering algorithm that can accomplish this is the `kmeans()` approach to clustering.
+
+This algorithm works by first placing a number of **random test points** in our data—in this case, two. Each of our real data points is measured as a **distance** from these test points, and then the test points are moved in a way to minimize that distance.
+
+
+---
+# Iris with K-means
 
 
 ```r
-data = data.frame(iris$Petal.Length, iris$Petal.Width)
+data &lt;- iris[, c('Petal.Length', 'Petal.Width')]
 
-iris.kmeans &lt;- kmeans(data, 2)
+km &lt;- kmeans(data, 2)
 
-plot(x = iris$Petal.Length, y = iris$Petal.Width, pch = iris.kmeans$cluster,
-    xlab = "Petal Length", ylab = "Petal Width")
-points(iris.kmeans$centers, pch = 8, cex = 2)
+plot(x = data$Petal.Length, y = data$Petal.Width, pch = km$cluster,
+     xlab = "Petal Length", ylab = "Petal Width")
+points(km$centers, pch = 8, cex = 2, col = "red")
 ```
 
 &lt;img src="k-means_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
 
-we can see how the algorithm works by splitting the data into two major groups. In the lower left is one cluster, denoted by the small triangles, and in the upper right there is another cluster labeled with circular data points. We see two big asterisks that mark where the cluster centers have finally stopped iterating. Any point that we further add to the data is marked as being in a cluster if it’s closer to one versus another. The points in the lower left are pretty well distinct from the others, but there is one outlier data point. 
+---
+# Iris with K-means
+
+We can see how the algorithm works by splitting the data into **two major groups**. In the lower left is one cluster, denoted by the small triangles, and in the upper right there is another cluster labeled with circular data points. 
+
+We see two big asterisks that mark where the cluster centers have finally stopped iterating. Any point that we further add to the data is marked as being in a cluster if it’s closer to one versus another. 
+
+The points in the lower left are pretty well distinct from the others, but there is one **outlier** data point. 
 
 ---
-Let’s use one more cluster, shown in Figure 2-5, to help make a little more sense of the data:
+# Iris with K-means
+
+Let’s use one more cluster.
 
 ```r
-iris.kmeans3 &lt;- kmeans(data, 3)
-plot(x = iris$Petal.Length, y = iris$Petal.Width, pch = iris.kmeans3$cluster,
-    xlab = "Petal Length", ylab = "Petal Width")
+km3 &lt;- kmeans(data, 3)
+plot(x = data$Petal.Length, y = data$Petal.Width, pch = km3$cluster,
+     xlab = "Petal Length", ylab = "Petal Width")
 
-points(iris.kmeans3$centers, pch = 8, cex = 2)
+points(km3$centers, pch = 8, cex = 2, col = "red")
 ```
 
 &lt;img src="k-means_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
+# Iris with K-means
 
-Now you can see that the larger group of data has been split further into two clusters of data that look to be about equal in size. There are three clusters in total with three different centers to the data. You could keep going by adding more and more cluster centers to the data, but you would be losing out on valuable information that way. If every single data point in the set were its own cluster, it would wind up being meaningless as far as classification goes. This is where you need to use a gut intuition to determine the appropriate level of fitting to the data. Too few clusters and the data is underfit: there isn’t a good way to determine structure. Too many clusters and you have the opposite problem: there’s far too much structure to make sense of simply.
+Now you can see that the larger group of data has been split further into two clusters of data that look to be *about equal* in size. 
+
+There are three clusters in total with **three different centers** to the data. You could keep going by adding *more and more* cluster centers to the data, but you would be losing out on valuable information that way. If every single data point in the set were its own cluster, it would wind up being meaningless as far as classification goes. This is where you need to use a **gut intuition** to determine the appropriate level of fitting to the data. Too few clusters and the data is *underfit*: there isn’t a good way to determine structure. Too many clusters and you have the opposite problem: there’s far too much structure to make sense of simply.
 
 
 ```r
-table(iris.kmeans3$cluster, iris$Species)
+table(km3$cluster, iris$Species)
 ```
 
 ```
 ##    
 ##     setosa versicolor virginica
-##   1      0         48         6
-##   2      0          2        44
-##   3     50          0         0
+##   1     50          0         0
+##   2      0         48         4
+##   3      0          2        46
 ```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
